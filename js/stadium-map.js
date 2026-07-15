@@ -68,11 +68,13 @@ export class StadiumMap {
         const rotateX = ((y - centerY) / centerY) * -12; 
         const rotateY = ((x - centerX) / centerX) * 12;  
         
+        this.svg.classList.remove('smooth-return');
         this.svg.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
         this.svg.classList.remove('idle-tilt');
       });
       
       container.addEventListener('mouseleave', () => {
+        this.svg.classList.add('smooth-return');
         this.svg.style.transform = ''; // reset to default
         this.svg.classList.add('idle-tilt');
       });
