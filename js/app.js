@@ -445,18 +445,11 @@ class AppController {
     if (popupInc) popupInc.textContent = incidents > 0 ? `${incidents} Active` : `None`;
 
 
-    // Position popup near cursor (container-relative to prevent flickering)
-    const container = document.getElementById('heatmapContainer');
-    if (container) {
-      const rect = container.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      popup.style.left = `${x + 15}px`;
-      popup.style.top = `${y + 15}px`;
-    } else {
-      popup.style.left = `${e.offsetX + 15}px`;
-      popup.style.top = `${e.offsetY + 15}px`;
-    }
+    // Position popup in a fixed corner of the container so it doesn't block the map
+    popup.style.top = '16px';
+    popup.style.right = '16px';
+    popup.style.left = 'auto'; // ensure left is cleared
+    popup.style.bottom = 'auto';
     popup.classList.add('visible');
   }
 }

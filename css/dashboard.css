@@ -161,7 +161,8 @@
 /* Zone info popup */
 .zone-popup {
   position: absolute;
-  background: var(--color-bg-secondary);
+  background: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(12px);
   border: var(--border-glass);
   border-radius: var(--radius-md);
   padding: var(--space-md);
