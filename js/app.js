@@ -58,7 +58,7 @@ class AppController {
     this.setupRouter();
     this.setupHeaderClock();
     this.setupSettingsModal();
-    this.setupLanguageSelector();
+    this.setupCustomDropdowns();
     this.setupMobileMenu();
     this.i18n.translateDOM();
 
@@ -402,16 +402,76 @@ class AppController {
     });
   }
 
-  setupLanguageSelector() {
-    const sel = document.getElementById('langSelector');
-    sel?.addEventListener('change', (e) => {
-      const lang = e.target.value;
-      this.i18n.setLanguage(lang);
-      this.chatManager.setLanguage(lang);
-      this.chatManager.addWelcomeMessage();
-      this.updateTitles();
-    this.switchPage(this.currentPage);
-      this.i18n.translateDOM();
+  setupCustomDropdowns() {
+    const langDropdown = document.getElementById('langDropdown');
+    const venueDropdown = document.getElementById('venueDropdown');
+
+    // 1. Language Dropdown Controller
+    if (langDropdown) {
+      const trigger = langDropdown.querySelector('.dropdown-trigger');
+      const triggerText = trigger.querySelector('span');
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        langDropdown.classList.toggle('open');
+        venueDropdown?.classList.remove('open');
+      });
+
+      langDropdown.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const lang = item.getAttribute('data-value');
+
+          // Active item states
+          langDropdown.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('active'));
+          item.classList.add('active');
+
+          // Update trigger label
+          triggerText.textContent = `🌐 ${item.textContent}`;
+          langDropdown.classList.remove('open');
+
+          // Dispatch translation
+          this.i18n.setLanguage(lang);
+          this.chatManager.setLanguage(lang);
+          this.chatManager.addWelcomeMessage();
+          this.updateTitles();
+          this.switchPage(this.currentPage);
+          this.i18n.translateDOM();
+        });
+      });
+    }
+
+    // 2. Venue Dropdown Controller
+    if (venueDropdown) {
+      const trigger = venueDropdown.querySelector('.dropdown-trigger');
+      const triggerText = trigger.querySelector('span');
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        venueDropdown.classList.toggle('open');
+        langDropdown?.classList.remove('open');
+      });
+
+      venueDropdown.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', () => {
+          // Active item states
+          venueDropdown.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('active'));
+          item.classList.add('active');
+
+          // Update trigger label
+          triggerText.textContent = item.textContent;
+          venueDropdown.classList.remove('open');
+
+          // Dynamically override stadium context inside chat agent
+          this.gemini.setVenueContext(item.textContent);
+          this.alerts.showToast('🏟️ Stadium Context Updated', `System optimized for ${item.textContent}.`, 'success');
+        });
+      });
+    }
+
+    // 3. Document level click-outside closer
+    document.addEventListener('click', () => {
+      langDropdown?.classList.remove('open');
+      venueDropdown?.classList.remove('open');
     });
   }
 

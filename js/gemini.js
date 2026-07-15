@@ -88,6 +88,11 @@ CURRENT VENUE CONTEXT:
     this._init();
   }
 
+  setVenueContext(venueName) {
+    const venueRegex = /- Venue: .*/g;
+    this.systemPrompt = this.systemPrompt.replace(venueRegex, `- Venue: ${venueName}`);
+  }
+
   async sendMessage(userMessage, language = 'en') {
     // Add language context if not English
     let prompt = userMessage;

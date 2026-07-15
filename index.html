@@ -88,24 +88,30 @@
 
       <!-- Sidebar Footer -->
       <div class="sidebar-footer">
-        <select class="venue-selector" id="venueSelector">
-          <option value="metlife">MetLife Stadium — NY/NJ</option>
-          <option value="sofi">SoFi Stadium — Los Angeles</option>
-          <option value="att">AT&T Stadium — Dallas</option>
-          <option value="hard-rock">Hard Rock Stadium — Miami</option>
-          <option value="nrg">NRG Stadium — Houston</option>
-          <option value="lumen">Lumen Field — Seattle</option>
-          <option value="lincoln">Lincoln Financial — Philadelphia</option>
-          <option value="arrowhead">GEHA Field — Kansas City</option>
-          <option value="gillette">Gillette Stadium — Boston</option>
-          <option value="mercedes">Mercedes-Benz — Atlanta</option>
-          <option value="levis">Levi's Stadium — Bay Area</option>
-          <option value="azteca">Estadio Azteca — Mexico City</option>
-          <option value="guadalajara">Estadio Akron — Guadalajara</option>
-          <option value="monterrey">Estadio BBVA — Monterrey</option>
-          <option value="bmo">BMO Field — Toronto</option>
-          <option value="bc-place">BC Place — Vancouver</option>
-        </select>
+        <div class="custom-dropdown venue-dropdown" id="venueDropdown">
+          <div class="dropdown-trigger">
+            <span>MetLife Stadium — NY/NJ</span>
+            <i data-lucide="chevron-down" style="width:14px;height:14px;opacity:0.7;"></i>
+          </div>
+          <div class="dropdown-menu">
+            <div class="dropdown-item active" data-value="metlife">MetLife Stadium — NY/NJ</div>
+            <div class="dropdown-item" data-value="sofi">SoFi Stadium — Los Angeles</div>
+            <div class="dropdown-item" data-value="att">AT&T Stadium — Dallas</div>
+            <div class="dropdown-item" data-value="hard-rock">Hard Rock Stadium — Miami</div>
+            <div class="dropdown-item" data-value="nrg">NRG Stadium — Houston</div>
+            <div class="dropdown-item" data-value="lumen">Lumen Field — Seattle</div>
+            <div class="dropdown-item" data-value="lincoln">Lincoln Financial — Philadelphia</div>
+            <div class="dropdown-item" data-value="arrowhead">GEHA Field — Kansas City</div>
+            <div class="dropdown-item" data-value="gillette">Gillette Stadium — Boston</div>
+            <div class="dropdown-item" data-value="mercedes">Mercedes-Benz — Atlanta</div>
+            <div class="dropdown-item" data-value="levis">Levi's Stadium — Bay Area</div>
+            <div class="dropdown-item" data-value="azteca">Estadio Azteca — Mexico City</div>
+            <div class="dropdown-item" data-value="guadalajara">Estadio Akron — Guadalajara</div>
+            <div class="dropdown-item" data-value="monterrey">Estadio BBVA — Monterrey</div>
+            <div class="dropdown-item" data-value="bmo">BMO Field — Toronto</div>
+            <div class="dropdown-item" data-value="bc-place">BC Place — Vancouver</div>
+          </div>
+        </div>
         <div class="live-indicator">
           <span class="live-dot"></span>
           <span data-i18n="live_stream_active">Live Data Stream Active</span>
@@ -128,20 +134,23 @@
         </div>
         <div class="header-right">
           <div class="header-clock" id="headerClock">--:--:--</div>
-          <div class="lang-selector">
-            <span>🌐</span>
-            <select id="langSelector">
-              <option value="en">English</option>
-              <option value="es">Español</option>
-              <option value="fr">Français</option>
-              <option value="pt">Português</option>
-              <option value="ar">العربية</option>
-              <option value="zh">中文</option>
-              <option value="ja">日本語</option>
-              <option value="ko">한국어</option>
-              <option value="de">Deutsch</option>
-              <option value="hi">हिन्दी</option>
-            </select>
+          <div class="custom-dropdown" id="langDropdown">
+            <div class="dropdown-trigger">
+              <span>🌐 English</span>
+              <i data-lucide="chevron-down" style="width:12px;height:12px;opacity:0.7;"></i>
+            </div>
+            <div class="dropdown-menu">
+              <div class="dropdown-item active" data-value="en">English</div>
+              <div class="dropdown-item" data-value="es">Español</div>
+              <div class="dropdown-item" data-value="fr">Français</div>
+              <div class="dropdown-item" data-value="pt">Português</div>
+              <div class="dropdown-item" data-value="ar">العربية</div>
+              <div class="dropdown-item" data-value="zh">中文</div>
+              <div class="dropdown-item" data-value="ja">日本語</div>
+              <div class="dropdown-item" data-value="ko">한국어</div>
+              <div class="dropdown-item" data-value="de">Deutsch</div>
+              <div class="dropdown-item" data-value="hi">हिन्दी</div>
+            </div>
           </div>
           <button class="header-btn tooltip" data-tooltip="Notifications" id="notifBtn">
             <i data-lucide="bell" style="width:18px;height:18px;"></i>
