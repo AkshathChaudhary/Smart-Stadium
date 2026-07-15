@@ -618,3 +618,9 @@
 .skeleton-circle {
   border-radius: 50%;
 }
+
+/* Position header tooltips downwards to prevent screen clipping */
+.top-header .tooltip::after {
+  bottom: auto;
+  top: calc(100% + 8px);
+}
