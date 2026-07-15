@@ -1,0 +1,20 @@
+{
+  "name": "smart-stadium",
+  "version": "1.0.0",
+  "description": "FIFA World Cup 2026 Smart Stadium Platform",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@google/genai": "^2.11.0",
+    "chart.js": "^4.4.7",
+    "vite": "^6.0.7"
+  }
+}

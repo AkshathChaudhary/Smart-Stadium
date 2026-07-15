@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(pkill *)",
+      "Bash(kill %1 *)",
+      "Bash(curl -s http://localhost:3001/)",
+      "Bash(grep *)",
+      "Bash(curl -s http://localhost:3003/)",
+      "Bash(curl -s http://localhost:3004/)",
+      "Bash(curl -s http://localhost:3004/src/assets/css/global.css)",
+      "Bash(curl -s http://localhost:3004/css/global.css)",
+      "Bash(curl -s http://localhost:3000/)"
+    ]
+  }
+}

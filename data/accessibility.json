@@ -1,0 +1,16 @@
+{
+  "elevators": [
+    { "id": "el-1", "location": "Gate A concourse", "status": "Operational", "nearestTo": "Sections 101-110, 301-310" },
+    { "id": "el-2", "location": "Gate B concourse", "status": "Operational", "nearestTo": "Sections 111-120, 311-320" },
+    { "id": "el-3", "location": "Gate D concourse", "status": "Operational", "nearestTo": "Sections 121-130, 321-330" },
+    { "id": "el-4", "location": "Gate F concourse", "status": "Operational", "nearestTo": "Sections 131-140, 331-340" }
+  ],
+  "sensoryRooms": [
+    { "id": "sr-1", "location": "Level 1, near Gate C (Guest Services 104)", "status": "Available", "capacity": 6, "features": "Dimmed lighting, noise-canceling headphones, tactile panels, comfortable seating" }
+  ],
+  "serviceAnimalAreas": [
+    { "id": "saa-1", "location": "Gate A Plaza (Exterior)", "features": "Relief turf, trash bin, waste bags, water bowl" },
+    { "id": "saa-2", "location": "Gate D Plaza (Exterior)", "features": "Relief turf, water station" }
+  ],
+  "accessibilityDesk": "Guest Services Booths at Sections 104, 124, 208, 224, 308, 324. Assisted listening devices and sensory bags (headphones, fidget toys) can be checked out here free of charge."
+}

@@ -1,0 +1,27 @@
+[
+  {
+    "keywords": ["bag", "backpack", "purse", "size"],
+    "question": "What is the bag policy?",
+    "answer": "Only clear plastic, vinyl, or PVC bags that do not exceed 12\" x 6\" x 12\" are permitted. Small clutch bags (4.5\" x 6.5\" or smaller) do not need to be clear. All bags are subject to search."
+  },
+  {
+    "keywords": ["prohibited", "items", "allowed", "bring"],
+    "question": "What items are prohibited?",
+    "answer": "Prohibited items include: weapons of any kind, professional cameras, audio/video recording devices, banners/signs larger than 3' x 5', outside food or beverages, coolers, selfie sticks, and drones."
+  },
+  {
+    "keywords": ["food", "drink", "concession", "dietary", "vegan", "gluten"],
+    "question": "What food options are available?",
+    "answer": "MetLife Stadium offers a wide variety of food including stadium classics (hot dogs, burgers, pretzels), tacos, pizza, and specialty items. Vegan options are available at Green Bowl (Level 2), and gluten-free items are available at Sections 120 and 224."
+  },
+  {
+    "keywords": ["wi-fi", "wifi", "internet", "connect"],
+    "question": "Is there free Wi-Fi?",
+    "answer": "Yes! Connect to the network: **#MetLifeStadium_Free_Wifi**. No password is required. Simply accept the terms of service on the login portal to connect."
+  },
+  {
+    "keywords": ["first aid", "medical", "nurse", "doctor", "injured", "hurt"],
+    "question": "Where is First Aid?",
+    "answer": "First Aid stations are located on Level 1 near Gate A and Section 128, and on Level 2 near Section 215. In an emergency, please notify the nearest stadium staff member immediately."
+  }
+]

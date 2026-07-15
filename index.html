@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="StadiumAI Command — GenAI-powered Smart Stadium Platform for FIFA World Cup 2026. Real-time crowd intelligence, multilingual fan assistance, sustainability tracking, and operational decision support.">
+  <title>StadiumAI Command | FIFA World Cup 2026 Smart Stadium</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/concierge.css">
+  <link rel="stylesheet" href="/css/animations.css">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏟️</text></svg>">
+</head>
+<body>
+  <div id="app">
+    <!-- ═══ Sidebar Navigation ═══ -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Logo -->
+      <div class="sidebar-logo">
+        <div class="logo-icon">🏟️</div>
+        <div class="logo-text">
+          <span class="logo-title">StadiumAI</span>
+          <span class="logo-subtitle">FIFA World Cup 2026</span>
+        </div>
+      </div>
+
+      <!-- Mode Switcher -->
+      <div class="mode-switcher" id="modeSwitcher">
+        <button class="mode-btn active" data-mode="fan" id="fanModeBtn" data-i18n="mode_fan">🎫 Fan</button>
+        <button class="mode-btn" data-mode="ops" id="opsModeBtn" data-i18n="mode_ops">📊 Operations</button>
+      </div>
+
+      <!-- Fan Navigation -->
+      <nav class="sidebar-nav" id="fanNav">
+        <div class="nav-section-title" data-i18n="nav_fan_section">Fan Concierge</div>
+        <div class="nav-item active" data-page="chat" id="navChat">
+          <span class="nav-icon"><i data-lucide="message-circle"></i></span>
+          <span data-i18n="nav_ai_assistant">AI Assistant</span>
+        </div>
+        <div class="nav-item" data-page="navigate" id="navNavigate">
+          <span class="nav-icon"><i data-lucide="compass"></i></span>
+          <span data-i18n="nav_navigate">Navigate</span>
+        </div>
+        <div class="nav-item" data-page="accessibility" id="navAccessibility">
+          <span class="nav-icon"><i data-lucide="accessibility"></i></span>
+          <span data-i18n="nav_accessibility">Accessibility</span>
+        </div>
+        <div class="nav-item" data-page="transport" id="navTransport">
+          <span class="nav-icon"><i data-lucide="bus"></i></span>
+          <span data-i18n="nav_transport">Transport</span>
+        </div>
+      </nav>
+
+      <!-- Ops Navigation -->
+      <nav class="sidebar-nav" id="opsNav" style="display: none;">
+        <div class="nav-section-title" data-i18n="nav_command_section">Command Center</div>
+        <div class="nav-item active" data-page="overview" id="navOverview">
+          <span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>
+          <span data-i18n="nav_overview">Overview</span>
+        </div>
+        <div class="nav-item" data-page="crowd" id="navCrowd">
+          <span class="nav-icon"><i data-lucide="users"></i></span>
+          <span data-i18n="nav_crowd_intel">Crowd Intel</span>
+          <span class="nav-badge" id="crowdAlertBadge" style="display:none;">!</span>
+        </div>
+        <div class="nav-item" data-page="sustainability" id="navSustainability">
+          <span class="nav-icon"><i data-lucide="leaf"></i></span>
+          <span data-i18n="nav_sustainability">Sustainability</span>
+        </div>
+        <div class="nav-item" data-page="alerts" id="navAlerts">
+          <span class="nav-icon"><i data-lucide="bell-ring"></i></span>
+          <span data-i18n="nav_ai_alerts">AI Alerts</span>
+          <span class="nav-badge" id="alertBadge">3</span>
+        </div>
+        <div class="nav-item" data-page="staff" id="navStaff">
+          <span class="nav-icon"><i data-lucide="hard-hat"></i></span>
+          <span data-i18n="nav_staff_deploy">Staff Deploy</span>
+        </div>
+      </nav>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <select class="venue-selector" id="venueSelector">
+          <option value="metlife">MetLife Stadium — NY/NJ</option>
+          <option value="sofi">SoFi Stadium — Los Angeles</option>
+          <option value="att">AT&T Stadium — Dallas</option>
+          <option value="hard-rock">Hard Rock Stadium — Miami</option>
+          <option value="nrg">NRG Stadium — Houston</option>
+          <option value="lumen">Lumen Field — Seattle</option>
+          <option value="lincoln">Lincoln Financial — Philadelphia</option>
+          <option value="arrowhead">GEHA Field — Kansas City</option>
+          <option value="gillette">Gillette Stadium — Boston</option>
+          <option value="mercedes">Mercedes-Benz — Atlanta</option>
+          <option value="levis">Levi's Stadium — Bay Area</option>
+          <option value="azteca">Estadio Azteca — Mexico City</option>
+          <option value="guadalajara">Estadio Akron — Guadalajara</option>
+          <option value="monterrey">Estadio BBVA — Monterrey</option>
+          <option value="bmo">BMO Field — Toronto</option>
+          <option value="bc-place">BC Place — Vancouver</option>
+        </select>
+        <div class="live-indicator">
+          <span class="live-dot"></span>
+          <span data-i18n="live_stream_active">Live Data Stream Active</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ═══ Main Content Area ═══ -->
+    <main class="main-content">
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="header-btn" id="menuToggle" style="display:none;">
+            <i data-lucide="menu" style="width:18px;height:18px;"></i>
+          </button>
+          <div>
+            <h1 class="page-title" id="pageTitle">AI Assistant</h1>
+            <p class="page-subtitle" id="pageSubtitle">Your multilingual stadium concierge</p>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="header-clock" id="headerClock">--:--:--</div>
+          <div class="lang-selector">
+            <span>🌐</span>
+            <select id="langSelector">
+              <option value="en">English</option>
+              <option value="es">Español</option>
+              <option value="fr">Français</option>
+              <option value="pt">Português</option>
+              <option value="ar">العربية</option>
+              <option value="zh">中文</option>
+              <option value="ja">日本語</option>
+              <option value="ko">한국어</option>
+              <option value="de">Deutsch</option>
+              <option value="hi">हिन्दी</option>
+            </select>
+          </div>
+          <button class="header-btn tooltip" data-tooltip="Notifications" id="notifBtn">
+            <i data-lucide="bell" style="width:18px;height:18px;"></i>
+            <span class="notification-dot"></span>
+          </button>
+          <button class="header-btn tooltip" data-tooltip="Settings" id="settingsBtn">
+            <i data-lucide="settings" style="width:18px;height:18px;"></i>
+          </button>
+          <button class="header-btn tooltip" data-tooltip="Toggle Theme" id="themeToggle">
+            <i data-lucide="sun" style="width:18px;height:18px;"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <div class="content-area" id="contentArea">
+
+        <!-- ═══════ FAN PAGES ═══════ -->
+
+        <!-- Chat Page -->
+        <div class="page active" id="pageChatPage" data-page="chat">
+          <div class="chat-layout">
+            <!-- Chat Panel -->
+            <div class="chat-panel">
+              <div class="chat-header">
+                <div class="chat-avatar">
+                  🤖
+                  <span class="online-dot"></span>
+                </div>
+                <div class="chat-info">
+                  <div class="chat-name" data-i18n="chat_agent_name">StadiumAI Concierge</div>
+                  <div class="chat-status" data-i18n="chat_agent_status">● Online — Ready to help</div>
+                </div>
+                <div class="chat-header-actions">
+                  <button class="btn btn-secondary" id="clearChatBtn" style="font-size: 0.75rem; padding: 4px 12px;" data-i18n="btn_clear">
+                    <i data-lucide="trash-2" style="width:14px;height:14px;"></i> Clear
+                  </button>
+                </div>
+              </div>
+              <div class="chat-messages" id="chatMessages">
+                <!-- Messages injected by JS -->
+              </div>
+              <div class="quick-actions" id="quickActions">
+                <button class="quick-action-chip" data-query="Where is the nearest restroom?" data-i18n="chip_restrooms">🚻 Restrooms</button>
+                <button class="quick-action-chip" data-query="What food options are nearby?" data-i18n="chip_food">🍔 Food & Drinks</button>
+                <button class="quick-action-chip" data-query="How do I get to my seat in Section 214?" data-i18n="chip_find_seat">💺 Find My Seat</button>
+                <button class="quick-action-chip" data-query="What are the accessibility services available?" data-i18n="chip_accessibility">♿ Accessibility</button>
+                <button class="quick-action-chip" data-query="What is the current match score?" data-i18n="chip_match_info">⚽ Match Info</button>
+                <button class="quick-action-chip" data-query="Where can I find first aid?" data-i18n="chip_first_aid">🏥 First Aid</button>
+                <button class="quick-action-chip" data-query="What is the best way to leave after the match?" data-i18n="chip_exit_plan">🚗 Exit Plan</button>
+                <button class="quick-action-chip" data-query="Tell me about this stadium" data-i18n="chip_stadium_info">🏟️ Stadium Info</button>
+              </div>
+              <div class="chat-input-area">
+                <div class="chat-input-wrapper">
+                  <input type="text" id="chatInput" placeholder="Ask me anything about the stadium..." autocomplete="off" data-i18n="placeholder_chat">
+                  <button class="chat-send-btn" id="chatSendBtn" disabled>
+                    <i data-lucide="send" style="width:18px;height:18px;"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chat Info Sidebar -->
+            <div class="chat-sidebar">
+              <!-- Live Match Card -->
+              <div class="info-card">
+                <div class="info-title" data-i18n="card_live_match">⚽ Live Match</div>
+                <div class="match-teams">
+                  <div class="team">
+                    <div class="team-flag">🇧🇷</div>
+                    <div class="team-name" data-i18n="team_brazil">Brazil</div>
+                  </div>
+                  <div class="match-vs" data-i18n="match_vs">VS</div>
+                  <div class="team">
+                    <div class="team-flag">🇫🇷</div>
+                    <div class="team-name" data-i18n="team_france">France</div>
+                  </div>
+                </div>
+                <div class="match-score" id="matchScore">2 — 1</div>
+                <div class="match-detail">
+                  <span data-i18n="match_time">⏱ Time</span>
+                  <span id="matchTime">67'</span>
+                </div>
+                <div class="match-detail">
+                  <span data-i18n="match_venue">🏟️ Venue</span>
+                  <span>MetLife Stadium</span>
+                </div>
+                <div class="match-detail">
+                  <span data-i18n="match_attendance">👥 Attendance</span>
+                  <span id="matchAttendance">82,500</span>
+                </div>
+              </div>
+
+              <!-- Wait Times Card -->
+              <div class="info-card">
+                <div class="info-title" data-i18n="card_wait_times">⏳ Current Wait Times</div>
+                <div class="wait-list" id="waitTimesList">
+                  <div class="wait-item">
+                    <span class="wait-name" data-i18n="wait_restrooms">🚻 Restrooms (Sec 100)</span>
+                    <span class="wait-time text-emerald">~3 min</span>
+                  </div>
+                  <div class="wait-item">
+                    <span class="wait-name" data-i18n="wait_concessions">🍔 Concessions (Main)</span>
+                    <span class="wait-time text-gold">~8 min</span>
+                  </div>
+                  <div class="wait-item">
+                    <span class="wait-name" data-i18n="wait_bar">🍺 Bar (Level 2)</span>
+                    <span class="wait-time text-coral">~12 min</span>
+                  </div>
+                  <div class="wait-item">
+                    <span class="wait-name" data-i18n="wait_merch">🏪 Merch Store</span>
+                    <span class="wait-time text-gold">~6 min</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Weather Card -->
+              <div class="info-card">
+                <div class="info-title" data-i18n="card_venue_conditions">🌤️ Venue Conditions</div>
+                <div class="match-detail">
+                  <span data-i18n="cond_temp">🌡 Temperature</span>
+                  <span>24°C / 75°F</span>
+                </div>
+                <div class="match-detail">
+                  <span data-i18n="cond_humidity">💧 Humidity</span>
+                  <span>55%</span>
+                </div>
+                <div class="match-detail">
+                  <span data-i18n="cond_noise">🔊 Noise Level</span>
+                  <span>92 dB</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigate Page -->
+        <div class="page" id="pageNavigatePage" data-page="navigate">
+          <div class="section-header mb-lg">
+            <h2 class="section-title">🧭 <span data-i18n="title_navigate">Stadium Navigation</span></h2>
+            <div style="display:flex; gap: 8px; align-items:center;">
+              <label style="display:flex;align-items:center;gap:8px;font-size:var(--text-sm);color:var(--color-text-secondary);">
+                <span data-i18n="accessible_routes">♿ Accessible Routes</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="accessibleRouteToggle">
+                  <span class="toggle-slider"></span>
+                </label>
+              </label>
+            </div>
+          </div>
+          <div class="grid-2-1">
+            <div class="glass-card">
+              <div class="card-header">
+                <span class="card-title" data-i18n="card_interactive_map"><span class="card-icon">🗺️</span> Interactive Map</span>
+                <span class="badge cyan" data-i18n="badge_live">LIVE</span>
+              </div>
+              <div class="heatmap-container" id="navMapContainer">
+                <svg id="navigationMap" class="heatmap-svg" viewBox="0 0 800 500"></svg>
+              </div>
+              <div class="heatmap-legend">
+                <div class="legend-item"><div class="legend-color low"></div><span data-i18n="legend_low">Low Traffic</span></div>
+                <div class="legend-item"><div class="legend-color moderate"></div><span data-i18n="legend_moderate">Moderate</span></div>
+                <div class="legend-item"><div class="legend-color high"></div><span data-i18n="legend_busy">Busy</span></div>
+                <div class="legend-item"><div class="legend-color critical"></div><span data-i18n="legend_very_busy">Very Busy</span></div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:var(--space-md);">
+              <div class="glass-card">
+                <div class="card-header">
+                  <span class="card-title" data-i18n="card_quick_nav"><span class="card-icon">📍</span> Quick Navigate</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;" id="quickNavList">
+                  <button class="quick-action-chip" style="text-align:left; padding: 10px 16px; width:100%;" data-i18n="qnav_restroom">🚻 Nearest Restroom → 45m (Gate B)</button>
+                  <button class="quick-action-chip" style="text-align:left; padding: 10px 16px; width:100%;" data-i18n="qnav_food">🍔 Nearest Food → 60m (Concourse C)</button>
+                  <button class="quick-action-chip" style="text-align:left; padding: 10px 16px; width:100%;" data-i18n="qnav_first_aid">🏥 First Aid → 120m (Level 1, Gate A)</button>
+                  <button class="quick-action-chip" style="text-align:left; padding: 10px 16px; width:100%;" data-i18n="qnav_elevator">♿ Elevator → 30m (Section 102)</button>
+                  <button class="quick-action-chip" style="text-align:left; padding: 10px 16px; width:100%;" data-i18n="qnav_merch">🏪 Merch Store → 85m (Main Concourse)</button>
+                  <button class="quick-action-chip" style="text-align:left; padding: 10px 16px; width:100%;" data-i18n="qnav_animal">🐕 Service Animal Area → 150m (Gate D)</button>
+                </div>
+              </div>
+              <div class="glass-card">
+                <div class="card-header">
+                  <span class="card-title" data-i18n="card_ai_tip"><span class="card-icon">💡</span> AI Tip</span>
+                </div>
+                <p style="font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.7;" data-i18n="nav_ai_tip_text">
+                  <strong style="color: var(--color-accent-gold);">🧠 Smart Route:</strong>
+                  Concession stands near Gate E currently have the shortest wait times (~3 min). 
+                  The main concourse is experiencing high traffic — consider using the Level 2 walkway for faster access to Sections 200-230.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accessibility Page -->
+        <div class="page" id="pageAccessibilityPage" data-page="accessibility">
+          <div class="section-header mb-lg">
+            <h2 class="section-title">♿ <span data-i18n="title_accessibility">Accessibility Hub</span></h2>
+            <span class="badge green" data-i18n="badge_all_services_active">ALL SERVICES ACTIVE</span>
+          </div>
+          <div class="grid-2 mb-xl">
+            <div class="glass-card">
+              <div class="card-header">
+                <span class="card-title" data-i18n="card_accessible_nav"><span class="card-icon">🦽</span> Accessible Navigation</span>
+              </div>
+              <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-md);" data-i18n="accessible_nav_desc">
+                All routes below avoid stairs and include elevator/ramp access.
+              </p>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div class="alert-card info">
+                  <div class="alert-icon">🛗</div>
+                  <div class="alert-content">
+                    <div class="alert-title" data-i18n="acc_elevators_title">Elevators</div>
+                    <div class="alert-message" data-i18n="acc_elevators_msg">4 elevators available. Nearest: Gate B (30m). All operational.</div>
+                  </div>
+                </div>
+                <div class="alert-card success">
+                  <div class="alert-icon">🔄</div>
+                  <div class="alert-content">
+                    <div class="alert-title" data-i18n="acc_ramps_title">Ramps</div>
+                    <div class="alert-message" data-i18n="acc_ramps_msg">8 ramp access points across all levels. Slope ≤ 1:12 grade.</div>
+                  </div>
+                </div>
+                <div class="alert-card info">
+                  <div class="alert-icon">🅿️</div>
+                  <div class="alert-content">
+                    <div class="alert-title" data-i18n="acc_parking_title">Accessible Parking</div>
+                    <div class="alert-message" data-i18n="acc_parking_msg">Lot A & B — 120 accessible spots. 23 currently available.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="glass-card">
+              <div class="card-header">
+                <span class="card-title" data-i18n="acc_sensory_title"><span class="card-icon">🔇</span> Sensory Services</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div class="alert-card success">
+                  <div class="alert-icon">🤫</div>
+                  <div class="alert-content">
+                    <div class="alert-title" data-i18n="acc_sensory_room_title">Sensory Room</div>
+                    <div class="alert-message" data-i18n="acc_sensory_room_msg">Level 1, near Gate C. Quiet space with dimmed lighting. Currently available.</div>
+                  </div>
+                </div>
+                <div class="alert-card info">
+                  <div class="alert-icon">📝</div>
+                  <div class="alert-content">
+                    <div class="alert-title" data-i18n="acc_captioning_title">Live Captioning</div>
+                    <div class="alert-message" data-i18n="acc_captioning_msg">PA announcements are live-captioned on your app and venue screens.</div>
+                  </div>
+                </div>
+                <div class="alert-card info">
+                  <div class="alert-icon">🎧</div>
+                  <div class="alert-content">
+                    <div class="alert-title" data-i18n="acc_audio_title">Audio Description</div>
+                    <div class="alert-message" data-i18n="acc_audio_msg">Match audio description available on FM 87.7 and in-app streaming.</div>
+                  </div>
+                </div>
+                <div class="alert-card success">
+                  <div class="alert-icon">🐕‍🦺</div>
+                  <div class="alert-content">
+                    <div class="alert-title" data-i18n="acc_animal_title">Service Animal Areas</div>
+                    <div class="alert-message" data-i18n="acc_animal_msg">Relief areas at Gates A, D, F. Water stations available.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="card-header">
+              <span class="card-title" data-i18n="card_pa_transcription"><span class="card-icon">📢</span> Live PA Transcription</span>
+              <span class="badge cyan" data-i18n="badge_live">LIVE</span>
+            </div>
+            <div id="paTranscription" style="font-family:var(--font-mono); font-size:var(--text-sm); color:var(--color-text-secondary); line-height: 2; max-height: 150px; overflow-y: auto; padding: var(--space-md); background: var(--color-bg-tertiary); border-radius: var(--radius-md);">
+              <div data-i18n="pa_line_1">[18:45] 🔊 Welcome to MetLife Stadium! Today's match: Brazil vs France, Group Stage.</div>
+              <div data-i18n="pa_line_2">[18:52] 🔊 Reminder: Accessible seating assistance available at all Guest Services desks.</div>
+              <div data-i18n="pa_line_3">[19:01] 🔊 The match will begin in approximately 10 minutes. Please find your seats.</div>
+              <div data-i18n="pa_line_4">[19:15] 🔊 Kickoff! Enjoy the match.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transport Page -->
+        <div class="page" id="pageTransportPage" data-page="transport">
+          <div class="section-header mb-lg">
+            <h2 class="section-title">🚗 <span data-i18n="title_transport">Transportation Hub</span></h2>
+          </div>
+          <div class="grid-4 mb-xl" id="transportStats">
+            <div class="stat-card">
+              <div class="stat-icon cyan">🅿️</div>
+              <div class="stat-value" id="parkingAvail">2,340</div>
+              <div class="stat-label" data-i18n="lbl_parking_spots">Parking Spots Available</div>
+              <div class="stat-change down" data-i18n="lbl_filling_fast">▼ Filling fast</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon emerald">🚇</div>
+              <div class="stat-value" id="nextTrain">4 min</div>
+              <div class="stat-label" data-i18n="lbl_next_train">Next Train Arrival</div>
+              <div class="stat-change up" data-i18n="lbl_on_schedule">▲ On schedule</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon gold">🚕</div>
+              <div class="stat-value" id="rideshareWait">~12 min</div>
+              <div class="stat-label" data-i18n="lbl_rideshare_wait">Rideshare Avg Wait</div>
+              <div class="stat-change down" data-i18n="lbl_surge_pricing">▲ Surge pricing</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon purple">🚌</div>
+              <div class="stat-value" id="shuttleNext">8 min</div>
+              <div class="stat-label" data-i18n="lbl_next_shuttle">Next Shuttle</div>
+              <div class="stat-change up" data-i18n="lbl_running_normally">▲ Running normally</div>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="glass-card">
+              <div class="card-header">
+                <span class="card-title" data-i18n="card_parking_status"><span class="card-icon">🅿️</span> Parking Status</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:12px;" id="parkingLots">
+                <!-- Injected dynamically by JS (already supported) -->
+              </div>
+            </div>
+            <div class="glass-card">
+              <div class="card-header">
+                <span class="card-title" data-i18n="card_public_transit"><span class="card-icon">🚆</span> Public Transit</span>
+              </div>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th data-i18n="th_route">Route</th>
+                    <th data-i18n="th_next">Next</th>
+                    <th data-i18n="th_status">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="transitTable">
+                  <!-- Injected dynamically by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════ OPS PAGES ═══════ -->
+
+        <!-- Overview Page -->
+        <div class="page" id="pageOverviewPage" data-page="overview">
+          <!-- Ticker Bar -->
+          <div class="ticker-bar mb-lg" style="border-radius: var(--radius-md);">
+            <div class="ticker-item">
+              <span class="ticker-label">CAPACITY</span>
+              <span class="ticker-value" id="tickerCapacity">82,500 / 82,500</span>
+            </div>
+            <div class="ticker-item">
+              <span class="live-dot" style="width:6px;height:6px;"></span>
+              <span class="ticker-label">GATES ACTIVE</span>
+              <span class="ticker-value" id="tickerGates">8 / 8</span>
+            </div>
+            <div class="ticker-item">
+              <span class="ticker-label">AVG ENTRY RATE</span>
+              <span class="ticker-value" id="tickerEntry">142/min</span>
+            </div>
+            <div class="ticker-item">
+              <span class="ticker-label">INCIDENTS</span>
+              <span class="ticker-value" style="color: var(--color-status-green);" id="tickerIncidents">0</span>
+            </div>
+            <div class="ticker-item">
+              <span class="ticker-label">ENERGY</span>
+              <span class="ticker-value" id="tickerEnergy">4.2 MW</span>
+            </div>
+          </div>
+
+          <!-- Stats Row -->
+          <div class="dashboard-stats">
+            <div class="stat-card">
+              <div class="stat-icon cyan">👥</div>
+              <div class="stat-value" id="statAttendance">82,500</div>
+              <div class="stat-label">Total Attendance</div>
+              <div class="stat-change up">▲ 100% Capacity</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon emerald">✅</div>
+              <div class="stat-value" id="statSafety">98.2%</div>
+              <div class="stat-label">Safety Score</div>
+              <div class="stat-change up">▲ 1.3% vs avg</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon gold">⚡</div>
+              <div class="stat-value" id="statEnergy">4.2 MW</div>
+              <div class="stat-label">Energy Usage</div>
+              <div class="stat-change down">▼ 12% optimized</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon purple">🤖</div>
+              <div class="stat-value" id="statAiActions">47</div>
+              <div class="stat-label">AI Actions Today</div>
+              <div class="stat-change up">▲ Active</div>
+            </div>
+          </div>
+
+          <!-- Main Dashboard Grid -->
+          <div class="grid-2-1 mb-xl">
+            <!-- Heatmap -->
+            <div class="glass-card">
+              <div class="card-header">
+                <span class="card-title"><span class="card-icon">🔥</span> Live Crowd Heatmap</span>
+                <span class="badge cyan">LIVE</span>
+              </div>
+              <div class="heatmap-container" id="heatmapContainer">
+                <svg id="stadiumHeatmap" class="heatmap-svg" viewBox="0 0 800 500"></svg>
+                <div class="zone-popup" id="zonePopup">
+                  <div class="zone-name" id="popupZoneName">Zone A</div>
+                  <div class="zone-stat"><span>Occupancy</span><span id="popupOccupancy">—</span></div>
+                  <div class="zone-stat"><span>Density</span><span id="popupDensity">—</span></div>
+                  <div class="zone-stat"><span>Trend</span><span id="popupTrend">—</span></div>
+                </div>
+              </div>
+              <div class="heatmap-legend">
+                <div class="legend-item"><div class="legend-color low"></div>Low (0-40%)</div>
+                <div class="legend-item"><div class="legend-color moderate"></div>Moderate (40-65%)</div>
+                <div class="legend-item"><div class="legend-color high"></div>High (65-85%)</div>
+                <div class="legend-item"><div class="legend-color critical"></div>Critical (85%+)</div>
+              </div>
+            </div>
+
+            <!-- Alert Feed -->
+            <div class="glass-card">
+              <div class="card-header">
+                <span class="card-title"><span class="card-icon">🔔</span> AI Alerts</span>
+                <span class="card-action" id="clearAlertsBtn">Clear All</span>
+              </div>
+              <div class="alert-feed" id="alertFeed">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Gate Throughput -->
+          <div class="glass-card mb-xl">
+            <div class="card-header">
+              <span class="card-title"><span class="card-icon">🚪</span> Gate Throughput Monitor</span>
+              <span class="badge green">ALL GATES ACTIVE</span>
+            </div>
+            <div class="gate-grid" id="gateGrid">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Crowd Page -->
+        <div class="page" id="pageCrowdPage" data-page="crowd">
+          <div class="section-header mb-lg">
+            <h2 class="section-title">👥 <span>Crowd Intelligence</span></h2>
+            <span class="badge cyan">AI-POWERED</span>
+          </div>
+          <div class="grid-2 mb-xl">
+            <div class="glass-card">
+              <div class="card-header">
+                <span class="card-title"><span class="card-icon">📈</span> Density Over Time</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="densityChart"></canvas>
+              </div>
+            </div>
+            <div class="glass-card">
+              <div class="card-header">
+                <span class="card-title"><span class="card-icon">🚪</span> Gate Flow Rate</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="gateFlowChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="card-header">
+              <span class="card-title"><span class="card-icon">🧠</span> AI Crowd Predictions</span>
+            </div>
+            <div id="crowdPredictions" style="display:flex;flex-direction:column;gap:8px;">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Sustainability Page -->
+        <div class="page" id="pageSustainabilityPage" data-page="sustainability">
+          <div class="section-header mb-lg">
+            <h2 class="section-title">🌱 <span>Sustainability Dashboard</span></h2>
+            <span class="badge green">ECO MODE ACTIVE</span>
+          </div>
+          <div class="grid-3 mb-xl">
+            <div class="stat-card">
+              <div class="stat-icon emerald">⚡</div>
+              <div class="stat-value" id="susEnergy">4.2 MW</div>
+              <div class="stat-label">Current Power Draw</div>
+              <div class="stat-change up">▼ 12% below target</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon cyan">💧</div>
+              <div class="stat-value" id="susWater">18.4K L</div>
+              <div class="stat-label">Water Usage Today</div>
+              <div class="stat-change up">▼ 8% vs baseline</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon gold">🌍</div>
+              <div class="stat-value" id="susCO2">12.8 t</div>
+              <div class="stat-label">CO₂ Emissions Est.</div>
+              <div class="stat-change up">▼ 15% offset</div>
+            </div>
+          </div>
+          <div class="grid-2 mb-xl">
+            <div class="glass-card">
+              <div class="card-header">
+                <span class="card-title"><span class="card-icon">⚡</span> Energy Usage (24h)</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="energyChart"></canvas>
+              </div>
+            </div>
+            <div class="glass-card">
+              <div class="card-header">
+                <span class="card-title"><span class="card-icon">💧</span> Water Consumption</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="waterChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="card-header">
+              <span class="card-title"><span class="card-icon">🧠</span> AI Sustainability Recommendations</span>
+            </div>
+            <div id="sustainabilityRecs" style="display:flex;flex-direction:column;gap:8px;">
+              <div class="alert-card success">
+                <div class="alert-icon">💡</div>
+                <div class="alert-content">
+                  <div class="alert-title">Dim Upper Concourse Lighting — Zone F</div>
+                  <div class="alert-message">Occupancy in Zone F is at 12%. Reducing lighting by 60% would save ~45 kWh over the next 2 hours with no fan impact.</div>
+                  <div class="alert-time">Estimated savings: $8.50 | 0.03t CO₂</div>
+                </div>
+              </div>
+              <div class="alert-card info">
+                <div class="alert-icon">❄️</div>
+                <div class="alert-content">
+                  <div class="alert-title">HVAC Optimization — Sections 300-330</div>
+                  <div class="alert-message">Current outdoor temp (24°C) allows natural ventilation. Reducing HVAC output by 30% in upper bowl recommended.</div>
+                  <div class="alert-time">Estimated savings: $42.00 | 0.15t CO₂</div>
+                </div>
+              </div>
+              <div class="alert-card warning">
+                <div class="alert-icon">🚰</div>
+                <div class="alert-content">
+                  <div class="alert-title">Water Anomaly Detected — Restroom Block D</div>
+                  <div class="alert-message">Water flow rate 23% above normal in Block D restrooms. Possible running fixture. Maintenance dispatch recommended.</div>
+                  <div class="alert-time">Potential waste: 340L/hr</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts Page -->
+        <div class="page" id="pageAlertsPage" data-page="alerts">
+          <div class="section-header mb-lg">
+            <h2 class="section-title">🔔 <span>AI Alert Center</span></h2>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-secondary" id="filterAllAlerts">All</button>
+              <button class="btn btn-danger" id="filterCritical">Critical</button>
+              <button class="btn btn-secondary" id="filterWarning">Warning</button>
+              <button class="btn btn-secondary" id="filterInfo">Info</button>
+            </div>
+          </div>
+          <div id="fullAlertFeed" style="display:flex;flex-direction:column;gap:8px;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Staff Page -->
+        <div class="page" id="pageStaffPage" data-page="staff">
+          <div class="section-header mb-lg">
+            <h2 class="section-title">👷 <span>Staff Deployment</span></h2>
+            <span class="badge cyan">AI-OPTIMIZED</span>
+          </div>
+          <div class="grid-3 mb-xl">
+            <div class="stat-card">
+              <div class="stat-icon cyan">👷</div>
+              <div class="stat-value">248</div>
+              <div class="stat-label">Staff On Duty</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon emerald">🛡️</div>
+              <div class="stat-value">64</div>
+              <div class="stat-label">Security Personnel</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon gold">🙋</div>
+              <div class="stat-value">120</div>
+              <div class="stat-label">Volunteers</div>
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="card-header">
+              <span class="card-title"><span class="card-icon">🧠</span> AI Deployment Recommendations</span>
+            </div>
+            <div id="staffDeployment">
+              <div class="staff-zone">
+                <div class="status-dot red"></div>
+                <div class="zone-info">
+                  <div class="zone-name">Gate A — Main Entrance</div>
+                  <div class="zone-detail">Current: 12 staff | Crowd density: HIGH</div>
+                </div>
+                <div class="staff-count text-coral">12</div>
+                <div class="ai-suggestion">🧠 Add +4 staff</div>
+              </div>
+              <div class="staff-zone">
+                <div class="status-dot yellow"></div>
+                <div class="zone-info">
+                  <div class="zone-name">Concourse B — Food Court</div>
+                  <div class="zone-detail">Current: 8 staff | Queue times: MODERATE</div>
+                </div>
+                <div class="staff-count text-gold">8</div>
+                <div class="ai-suggestion">🧠 Add +2 staff</div>
+              </div>
+              <div class="staff-zone">
+                <div class="status-dot green"></div>
+                <div class="zone-info">
+                  <div class="zone-name">Section 300 — Upper Bowl</div>
+                  <div class="zone-detail">Current: 16 staff | Crowd density: LOW</div>
+                </div>
+                <div class="staff-count text-emerald">16</div>
+                <div class="ai-suggestion">🧠 Reassign -6 staff</div>
+              </div>
+              <div class="staff-zone">
+                <div class="status-dot green"></div>
+                <div class="zone-info">
+                  <div class="zone-name">Medical Station — Level 1</div>
+                  <div class="zone-detail">Current: 6 medics | Incidents: 0</div>
+                </div>
+                <div class="staff-count text-emerald">6</div>
+                <div class="ai-suggestion">🧠 Optimal</div>
+              </div>
+              <div class="staff-zone">
+                <div class="status-dot orange"></div>
+                <div class="zone-info">
+                  <div class="zone-name">Parking Lot B — General</div>
+                  <div class="zone-detail">Current: 4 staff | Traffic: HEAVY</div>
+                </div>
+                <div class="staff-count text-orange">4</div>
+                <div class="ai-suggestion">🧠 Add +3 staff</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer"></div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:999; display:none; align-items:center; justify-content:center;">
+    <div class="glass-card" style="width:400px; max-width:90vw;">
+      <div class="card-header">
+        <span class="card-title">⚙️ Settings</span>
+        <button id="closeSettings" style="font-size:1.2rem; color:var(--color-text-muted);">✕</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--space-lg);">
+        <div>
+          <label style="font-size:var(--text-sm);font-weight:600;display:block;margin-bottom:8px;">Gemini API Key</label>
+          <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key" style="width:100%;padding:10px 14px;border-radius:var(--radius-md);font-size:var(--text-sm);">
+        </div>
+        <div>
+          <label style="font-size:var(--text-sm);font-weight:600;display:block;margin-bottom:8px;">Data Refresh Rate</label>
+          <select id="refreshRate" style="width:100%;padding:10px 14px;border-radius:var(--radius-md);font-size:var(--text-sm);">
+            <option value="2000">2 seconds (Real-time)</option>
+            <option value="5000" selected>5 seconds (Balanced)</option>
+            <option value="10000">10 seconds (Low bandwidth)</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="saveSettingsBtn" style="width:100%;justify-content:center;">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
