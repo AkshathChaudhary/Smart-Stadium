@@ -53,36 +53,6 @@ export class StadiumMap {
   init() {
     this.svg.innerHTML = ''; // clear
 
-    // 0. Setup interactive 3D tilt tracking
-    const container = this.svg.parentElement;
-    if (container && container.classList.contains('heatmap-container')) {
-      container.addEventListener('mousemove', (e) => {
-        const rect = container.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        // Max tilt of 12 degrees
-        const rotateX = ((y - centerY) / centerY) * -12; 
-        const rotateY = ((x - centerX) / centerX) * 12;  
-        
-        this.svg.classList.remove('smooth-return');
-        this.svg.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
-        this.svg.classList.remove('idle-tilt');
-      });
-      
-      container.addEventListener('mouseleave', () => {
-        this.svg.classList.add('smooth-return');
-        this.svg.style.transform = ''; // reset to default
-        this.svg.classList.add('idle-tilt');
-      });
-      
-      // Apply initial idle animation
-      this.svg.classList.add('idle-tilt');
-    }
-
     // 1. Draw grid / guide lines (optional, keep it clean)
     // 2. Draw stadium structural outer boundary (dashed line)
     const outerTrack = document.createElementNS('http://www.w3.org/2000/svg', 'rect');

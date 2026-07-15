@@ -18,85 +18,29 @@
   aspect-ratio: 16 / 10;
   background: var(--color-bg-tertiary);
   border-radius: var(--radius-md);
-  overflow: visible;
-  perspective: 800px;
-  transform-style: preserve-3d;
-}
-
-/* Ambient glow ring around heatmap */
-.heatmap-container::before {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: calc(var(--radius-md) + 4px);
-  background: linear-gradient(135deg,
-    rgba(0, 229, 255, 0.08),
-    rgba(255, 215, 0, 0.05),
-    rgba(138, 43, 226, 0.06),
-    rgba(0, 229, 255, 0.08)
-  );
-  background-size: 300% 300%;
-  animation: heatmapGlow 6s ease-in-out infinite;
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-.heatmap-container:hover::before {
-  opacity: 1;
-}
-
-/* Floor shadow under heatmap for 3D depth */
-.heatmap-container::after {
-  content: '';
-  position: absolute;
-  bottom: -12px;
-  left: 10%;
-  width: 80%;
-  height: 16px;
-  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.15) 0%, transparent 70%);
-  border-radius: 50%;
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.5s ease 0.1s;
-  filter: blur(6px);
-}
-
-.heatmap-container:hover::after {
-  opacity: 1;
+  overflow: hidden;
 }
 
 .heatmap-svg {
   width: 100%;
   height: 100%;
-  transform-style: preserve-3d;
-}
-
-.heatmap-svg.smooth-return {
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-/* Idle tilt animation when not hovered */
-.heatmap-svg.idle-tilt {
-  animation: heatmapIdleTilt 8s ease-in-out infinite;
 }
 
 .heatmap-zone {
   cursor: pointer;
-  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: fill 0.3s ease, stroke 0.3s ease, stroke-width 0.3s ease, filter 0.3s ease, transform 0.3s ease;
   stroke: rgba(0, 229, 255, 0.15);
   stroke-width: 1;
-  filter: drop-shadow(0 0 0 transparent);
+  filter: none;
   transform-origin: center center;
   transform-box: fill-box;
 }
 
 .heatmap-zone:hover {
   stroke: var(--color-accent-cyan);
-  stroke-width: 3;
-  filter: brightness(1.5) drop-shadow(0 8px 16px rgba(0, 229, 255, 0.4));
-  transform: scale(1.15) translateY(-5px);
-  z-index: 10;
+  stroke-width: 2.5;
+  filter: brightness(1.4) drop-shadow(0 4px 12px rgba(0, 229, 255, 0.35));
+  transform: scale(1.08);
 }
 
 .heatmap-zone.density-low {

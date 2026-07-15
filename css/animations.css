@@ -38,6 +38,11 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Don't apply hover transform to cards containing the heatmap — it shifts the SVG coordinate space */
+.glass-card:has(.heatmap-container):hover {
+  transform: none;
+}
+
 .stat-card:hover {
   transform: translateY(-5px) scale(1.02);
   box-shadow: var(--shadow-card), var(--shadow-glow-gold);
