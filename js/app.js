@@ -202,7 +202,6 @@ class AppController {
     }
 
     this.updateTitles();
-    this.switchPage(this.currentPage);
   }
 
   updateTitles() {
