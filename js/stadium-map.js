@@ -67,6 +67,9 @@ export class StadiumMap {
     this.svg.appendChild(outerTrack);
 
     // 3. Draw zones
+    const isLightTheme = document.documentElement.classList.contains('light-theme');
+    const labelColor = isLightTheme ? 'rgba(26, 29, 38, 0.95)' : 'rgba(240, 244, 255, 0.85)';
+
     for (const [id, config] of Object.entries(this.zonesConfig)) {
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('id', id);
@@ -99,7 +102,7 @@ export class StadiumMap {
       text.setAttribute('id', `label-${id}`);
       text.setAttribute('x', config.cx);
       text.setAttribute('y', config.cy - 5); // Shift up slightly to make room for count
-      text.setAttribute('fill', 'rgba(240, 244, 255, 0.85)');
+      text.setAttribute('fill', labelColor);
       text.setAttribute('font-size', '10px');
       text.setAttribute('font-weight', '600');
       text.setAttribute('text-anchor', 'middle');
@@ -116,6 +119,10 @@ export class StadiumMap {
 
   // Update heatmap colors based on live density states
   updateHeatmap(zones) {
+    const isLightTheme = document.documentElement.classList.contains('light-theme');
+    const titleColor = isLightTheme ? 'rgba(26, 29, 38, 0.95)' : 'rgba(240, 244, 255, 0.95)';
+    const countColor = isLightTheme ? 'rgba(26, 29, 38, 0.65)' : 'rgba(240, 244, 255, 0.6)';
+
     zones.forEach(zone => {
       const el = this.svg.getElementById(zone.id);
       if (el) {
@@ -137,7 +144,7 @@ export class StadiumMap {
         if (config.name.includes('Bowl')) label = config.name.match(/\(([^)]+)\)/)?.[1] || 'Bowl';
         if (config.name.includes('Gate')) label = config.name.split('—')[0].trim();
         
-        textEl.innerHTML = `<tspan x="${config.cx}" dy="0">${label}</tspan><tspan x="${config.cx}" dy="11" font-size="8px" font-weight="500" fill="rgba(255, 255, 255, 0.6)">${zone.people.toLocaleString()}</tspan>`;
+        textEl.innerHTML = `<tspan x="${config.cx}" dy="0" fill="${titleColor}">${label}</tspan><tspan x="${config.cx}" dy="11" font-size="8px" font-weight="500" fill="${countColor}">${zone.people.toLocaleString()}</tspan>`;
       }
     });
   }

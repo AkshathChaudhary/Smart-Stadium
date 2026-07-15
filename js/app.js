@@ -112,6 +112,17 @@ class AppController {
         const isLight = document.documentElement.classList.contains("light-theme");
         localStorage.setItem('stadiumai_theme', isLight ? 'light' : 'dark');
         updateIcon(isLight);
+
+        // Instantly force redraw the map to apply theme text colors
+        const snapshot = this.simulator.generateSnapshot();
+        if (this.stadiumHeatmap) {
+          this.stadiumHeatmap.init();
+          this.stadiumHeatmap.updateHeatmap(snapshot.zones);
+        }
+        if (this.navigationMap) {
+          this.navigationMap.init();
+          this.navigationMap.updateHeatmap(snapshot.zones);
+        }
       };
       themeToggleBtn.addEventListener("click", toggleTheme);
     }
