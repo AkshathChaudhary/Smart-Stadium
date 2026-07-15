@@ -96,23 +96,22 @@ class AppController {
     if (savedTheme === 'light') {
       document.documentElement.classList.add('light-theme');
     }
+    
     if (themeToggleBtn) {
+      // Helper to dynamically update theme icon using Lucide
+      const updateIcon = (isLight) => {
+        themeToggleBtn.innerHTML = `<i data-lucide="${isLight ? 'moon' : 'sun'}" style="width:18px;height:18px;"></i>`;
+        lucide.createIcons();
+      };
+
       // Set initial icon
-      const initIcon = themeToggleBtn.querySelector("i");
-      if (document.documentElement.classList.contains("light-theme")) {
-        initIcon.dataset.lucide = "moon";
-      } else {
-        initIcon.dataset.lucide = "sun";
-      }
+      updateIcon(document.documentElement.classList.contains("light-theme"));
+
       const toggleTheme = () => {
         document.documentElement.classList.toggle("light-theme");
         const isLight = document.documentElement.classList.contains("light-theme");
         localStorage.setItem('stadiumai_theme', isLight ? 'light' : 'dark');
-        // Update the icon based on current theme
-        const icon = themeToggleBtn.querySelector("i");
-        icon.dataset.lucide = isLight ? "moon" : "sun";
-        // Update the icon
-        lucide.createIcons();
+        updateIcon(isLight);
       };
       themeToggleBtn.addEventListener("click", toggleTheme);
     }
