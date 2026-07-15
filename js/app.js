@@ -40,6 +40,10 @@ class AppController {
       refreshRate: parseInt(localStorage.getItem("stadiumai_refresh")) || 2000,
     };
 
+    // Tracking active hover state for real-time count updates
+    this.activeHoverZoneId = null;
+    this.activeHoverZoneConfig = null;
+
     if (this.settings.apiKey) {
       this.gemini.setApiKey(this.settings.apiKey);
       const apiKeyInput = document.getElementById('apiKeyInput');
@@ -278,6 +282,29 @@ class AppController {
 
     // 10. Update AI Crowd Predictions
     this.updateCrowdPredictions(this.simulator.generateCrowdPredictions());
+
+    // 11. If a zone is currently being hovered, update the popup values in real-time
+    if (this.activeHoverZoneId && this.activeHoverZoneConfig) {
+      const activeZone = data.zones.find(z => z.id === this.activeHoverZoneId);
+      if (activeZone) {
+        document.getElementById('popupOccupancy').textContent = `${activeZone.occupancy}%`;
+        
+        const popupPeople = document.getElementById('popupPeople');
+        if (popupPeople) popupPeople.textContent = `${activeZone.people.toLocaleString()} fans`;
+
+        document.getElementById('popupDensity').textContent = activeZone.density.toUpperCase();
+        document.getElementById('popupTrend').textContent = activeZone.trend.toUpperCase();
+
+        const waitTime = Math.max(0, Math.floor((activeZone.occupancy / 100) * 15));
+        const incidents = activeZone.density === 'critical' ? 2 : activeZone.density === 'high' ? 1 : 0;
+
+        const popupWait = document.getElementById('popupWait');
+        if (popupWait) popupWait.textContent = `~${Math.round(waitTime)} min`;
+
+        const popupInc = document.getElementById('popupIncidents');
+        if (popupInc) popupInc.textContent = incidents > 0 ? `${incidents} Active` : `None`;
+      }
+    }
   }
 
   updateWaitTimesList(times) {
@@ -421,20 +448,29 @@ class AppController {
     if (!popup) return;
 
     if (!id || !config) {
+      this.activeHoverZoneId = null;
+      this.activeHoverZoneConfig = null;
       popup.classList.remove('visible');
       return;
     }
+
+    this.activeHoverZoneId = id;
+    this.activeHoverZoneConfig = config;
 
     const zone = this.simulator.generateSnapshot().zones.find(z => z.id === id);
     if (!zone) return;
 
     document.getElementById('popupZoneName').textContent = config.name;
     document.getElementById('popupOccupancy').textContent = `${zone.occupancy}%`;
+    
+    const popupPeople = document.getElementById('popupPeople');
+    if (popupPeople) popupPeople.textContent = `${zone.people.toLocaleString()} fans`;
+
     document.getElementById('popupDensity').textContent = zone.density.toUpperCase();
     document.getElementById('popupTrend').textContent = zone.trend.toUpperCase();
     
     // Add extra details
-    const waitTime = Math.max(0, Math.floor((zone.occupancy / 100) * 15) + (Math.random() * 5 - 2));
+    const waitTime = Math.max(0, Math.floor((zone.occupancy / 100) * 15));
     const incidents = zone.density === 'critical' ? 2 : zone.density === 'high' ? 1 : 0;
     
     const popupWait = document.getElementById('popupWait');
