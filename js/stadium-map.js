@@ -109,6 +109,11 @@ export class StadiumMap {
         if (this.onZoneClick) this.onZoneClick(id, config, e);
       });
 
+      path.addEventListener('mouseenter', () => {
+        // Bring to front so 3D scale doesn't clip behind neighbors
+        path.parentNode.appendChild(path);
+      });
+
       path.addEventListener('mousemove', (e) => {
         if (this.onZoneHover) this.onZoneHover(id, config, e);
       });

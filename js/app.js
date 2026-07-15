@@ -433,6 +433,17 @@ class AppController {
     document.getElementById('popupOccupancy').textContent = `${zone.occupancy}%`;
     document.getElementById('popupDensity').textContent = zone.density.toUpperCase();
     document.getElementById('popupTrend').textContent = zone.trend.toUpperCase();
+    
+    // Add extra details
+    const waitTime = Math.max(0, Math.floor((zone.occupancy / 100) * 15) + (Math.random() * 5 - 2));
+    const incidents = zone.density === 'critical' ? 2 : zone.density === 'high' ? 1 : 0;
+    
+    const popupWait = document.getElementById('popupWait');
+    if (popupWait) popupWait.textContent = `~${Math.round(waitTime)} min`;
+    
+    const popupInc = document.getElementById('popupIncidents');
+    if (popupInc) popupInc.textContent = incidents > 0 ? `${incidents} Active` : `None`;
+
 
     // Position popup near cursor (container-relative to prevent flickering)
     const container = document.getElementById('heatmapContainer');
