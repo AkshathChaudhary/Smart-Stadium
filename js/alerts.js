@@ -3,6 +3,8 @@
    Renders, updates, and manages AI-generated operational alerts
    ============================================================ */
 
+import { escapeHTML } from './security.js';
+
 export class AlertSystem {
   constructor(alertFeedId, fullFeedId) {
     this.alertFeed = document.getElementById(alertFeedId);
@@ -46,10 +48,10 @@ export class AlertSystem {
     toast.innerHTML = `
       <div class="toast-icon">${icon}</div>
       <div class="toast-content">
-        <div class="toast-title">${title}</div>
-        <div class="toast-message">${message}</div>
+        <div class="toast-title">${escapeHTML(title)}</div>
+        <div class="toast-message">${escapeHTML(message)}</div>
       </div>
-      <button class="toast-close">✕</button>
+      <button class="toast-close" aria-label="Dismiss notification">✕</button>
     `;
 
     toast.querySelector('.toast-close').addEventListener('click', () => {
@@ -154,9 +156,9 @@ export class AlertSystem {
     card.innerHTML = `
       <div class="alert-icon">${alert.icon}</div>
       <div class="alert-content">
-        <div class="alert-title">${alert.title}</div>
-        <div class="alert-message">${alert.message}</div>
-        <div class="alert-time">${alert.time}</div>
+        <div class="alert-title">${escapeHTML(alert.title)}</div>
+        <div class="alert-message">${escapeHTML(alert.message)}</div>
+        <div class="alert-time">${escapeHTML(alert.time)}</div>
       </div>
     `;
     return card;

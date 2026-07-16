@@ -3,13 +3,17 @@
    Wraps the Google Gemini API for AI-powered features
    ============================================================ */
 
+import { SecureStorage, RateLimiter, logger, sanitizeError } from './security.js';
+
 export class GeminiService {
   constructor() {
-    this.apiKey = localStorage.getItem('stadiumai_api_key') || '';
+    this.storage = new SecureStorage();
+    this.apiKey = this.storage.get('api_key') || '';
     this.model = 'gemini-2.0-flash';
     this.isAvailable = false;
     this.genAI = null;
     this.chat = null;
+    this.rateLimiter = new RateLimiter(10, 0.1667); // 10 tokens capacity, refill ~1 token every 6 seconds (10 requests/min)
 
     this.systemPrompt = `You are "StadiumAI Concierge" — an expert AI assistant for the FIFA World Cup 2026, currently deployed at a smart stadium. You help fans, staff, and organizers with:
 
@@ -69,14 +73,14 @@ CURRENT VENUE CONTEXT:
 
   async _init() {
     if (!this.apiKey) {
-      console.log('[GeminiService] No API key found. Running in mock mode.');
+      logger.log('[GeminiService] No API key found. Running in mock mode.');
       this.isAvailable = false;
       return;
     }
     // Verify apiKey is not a mock or empty string
     if (this.apiKey.trim().length > 10) {
       this.isAvailable = true;
-      console.log('[GeminiService] Initialized with API Key endpoint configuration.');
+      logger.log('[GeminiService] Initialized with API Key endpoint configuration.');
     } else {
       this.isAvailable = false;
     }
@@ -84,7 +88,7 @@ CURRENT VENUE CONTEXT:
 
   setApiKey(key) {
     this.apiKey = key;
-    localStorage.setItem('stadiumai_api_key', key);
+    this.storage.set('api_key', key, { sensitive: true });
     this._init();
   }
 
@@ -94,6 +98,15 @@ CURRENT VENUE CONTEXT:
   }
 
   async sendMessage(userMessage, language = 'en') {
+    // Apply client-side rate limiting
+    if (!this.rateLimiter.tryConsume()) {
+      logger.warn('[GeminiService] Client rate limit triggered.');
+      return {
+        text: `⚠️ **Rate Limit Exceeded**\n\nYou are sending messages too quickly. Please wait approximately ${this.rateLimiter.getWaitTime()} seconds before trying again.`,
+        source: 'mock'
+      };
+    }
+
     // Add language context if not English
     let prompt = userMessage;
     if (language !== 'en') {
@@ -108,7 +121,7 @@ CURRENT VENUE CONTEXT:
       try {
         return await this._sendToGemini(prompt, language);
       } catch (err) {
-        console.warn('[GeminiService] Live request failed, falling back to mock:', err);
+        logger.warn('[GeminiService] Live request failed, falling back to mock:', sanitizeError(err));
         return this._generateMockResponse(userMessage, language);
       }
     } else {
@@ -117,7 +130,8 @@ CURRENT VENUE CONTEXT:
   }
 
   async _sendToGemini(prompt, language = 'en') {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${this.apiKey}`;
+    // Secure API key: pass it via header (x-goog-api-key) instead of query parameter!
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
     
     // Inject dynamic system prompt to enforce target language response
     let systemInstructionText = this.systemPrompt;
@@ -143,29 +157,42 @@ CURRENT VENUE CONTEXT:
       }
     };
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
-    });
+    // Implement request timeout using AbortController (30 seconds)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-    if (!response.ok) {
-      throw new Error(`Gemini API returned status ${response.status}`);
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': this.apiKey // Passes key securely in request headers
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`Gemini API returned status ${response.status}`);
+      }
+
+      const data = await response.json();
+      const candidateText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      
+      if (!candidateText) {
+        throw new Error('Invalid response structure from Gemini API');
+      }
+
+      return {
+        text: candidateText,
+        source: 'gemini'
+      };
+    } catch (err) {
+      clearTimeout(timeoutId);
+      throw err;
     }
-
-    const data = await response.json();
-    const candidateText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    
-    if (!candidateText) {
-      throw new Error('Invalid response structure from Gemini API');
-    }
-
-    return {
-      text: candidateText,
-      source: 'gemini'
-    };
   }
 
   _generateMockResponse(message, language) {

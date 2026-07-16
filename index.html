@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://generativelanguage.googleapis.com; img-src 'self' data:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://generativelanguage.googleapis.com; img-src 'self' data:; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests;">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="StadiumAI Command — GenAI-powered Smart Stadium Platform for FIFA World Cup 2026. Real-time crowd intelligence, multilingual fan assistance, sustainability tracking, and operational decision support.">
   <title>StadiumAI Command | FIFA World Cup 2026 Smart Stadium</title>
@@ -15,18 +15,19 @@
   <link rel="stylesheet" href="/css/animations.css">
 
   <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@0.400.0" integrity="sha384-8aPDSS8PITpbbP5u/xl0pTc7N8yU/dHjXBQwa2hJzZ2FEFd73n1pK5dSgaIYSZOf" crossorigin="anonymous"></script>
 
   <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏟️</text></svg>">
 </head>
 <body>
+  <a href="#contentArea" class="skip-link" data-i18n="skip_to_content">Skip to content</a>
   <div id="app">
     <!-- ═══ Sidebar Navigation ═══ -->
     <aside class="sidebar" id="sidebar">
       <!-- Logo -->
       <div class="sidebar-logo">
-        <div class="logo-icon">🏟️</div>
+        <div class="logo-icon" role="img" aria-label="Stadium logo">🏟️</div>
         <div class="logo-text">
           <span class="logo-title">StadiumAI</span>
           <span class="logo-subtitle">FIFA World Cup 2026</span>
@@ -34,83 +35,83 @@
       </div>
 
       <!-- Mode Switcher -->
-      <div class="mode-switcher" id="modeSwitcher">
-        <button class="mode-btn active" data-mode="fan" id="fanModeBtn" data-i18n="mode_fan">🎫 Fan</button>
-        <button class="mode-btn" data-mode="ops" id="opsModeBtn" data-i18n="mode_ops">📊 Operations</button>
+      <div class="mode-switcher" id="modeSwitcher" role="tablist" aria-label="Application Mode">
+        <button class="mode-btn active" data-mode="fan" id="fanModeBtn" data-i18n="mode_fan" role="tab" aria-selected="true"><span role="img" aria-label="ticket icon">🎫</span> Fan</button>
+        <button class="mode-btn" data-mode="ops" id="opsModeBtn" data-i18n="mode_ops" role="tab" aria-selected="false"><span role="img" aria-label="chart icon">📊</span> Operations</button>
       </div>
 
       <!-- Fan Navigation -->
-      <nav class="sidebar-nav" id="fanNav">
+      <nav class="sidebar-nav" id="fanNav" aria-label="Fan Concierge Navigation">
         <div class="nav-section-title" data-i18n="nav_fan_section">Fan Concierge</div>
-        <div class="nav-item active" data-page="chat" id="navChat">
+        <button class="nav-item active" data-page="chat" id="navChat">
           <span class="nav-icon"><i data-lucide="message-circle"></i></span>
           <span data-i18n="nav_ai_assistant">AI Assistant</span>
-        </div>
-        <div class="nav-item" data-page="navigate" id="navNavigate">
+        </button>
+        <button class="nav-item" data-page="navigate" id="navNavigate">
           <span class="nav-icon"><i data-lucide="compass"></i></span>
           <span data-i18n="nav_navigate">Navigate</span>
-        </div>
-        <div class="nav-item" data-page="accessibility" id="navAccessibility">
+        </button>
+        <button class="nav-item" data-page="accessibility" id="navAccessibility">
           <span class="nav-icon"><i data-lucide="accessibility"></i></span>
           <span data-i18n="nav_accessibility">Accessibility</span>
-        </div>
-        <div class="nav-item" data-page="transport" id="navTransport">
+        </button>
+        <button class="nav-item" data-page="transport" id="navTransport">
           <span class="nav-icon"><i data-lucide="bus"></i></span>
           <span data-i18n="nav_transport">Transport</span>
-        </div>
+        </button>
       </nav>
 
       <!-- Ops Navigation -->
-      <nav class="sidebar-nav" id="opsNav" style="display: none;">
+      <nav class="sidebar-nav" id="opsNav" style="display: none;" aria-label="Operations Navigation">
         <div class="nav-section-title" data-i18n="nav_command_section">Command Center</div>
-        <div class="nav-item active" data-page="overview" id="navOverview">
+        <button class="nav-item active" data-page="overview" id="navOverview">
           <span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>
           <span data-i18n="nav_overview">Overview</span>
-        </div>
-        <div class="nav-item" data-page="crowd" id="navCrowd">
+        </button>
+        <button class="nav-item" data-page="crowd" id="navCrowd">
           <span class="nav-icon"><i data-lucide="users"></i></span>
           <span data-i18n="nav_crowd_intel">Crowd Intel</span>
           <span class="nav-badge" id="crowdAlertBadge" style="display:none;">!</span>
-        </div>
-        <div class="nav-item" data-page="sustainability" id="navSustainability">
+        </button>
+        <button class="nav-item" data-page="sustainability" id="navSustainability">
           <span class="nav-icon"><i data-lucide="leaf"></i></span>
           <span data-i18n="nav_sustainability">Sustainability</span>
-        </div>
-        <div class="nav-item" data-page="alerts" id="navAlerts">
+        </button>
+        <button class="nav-item" data-page="alerts" id="navAlerts">
           <span class="nav-icon"><i data-lucide="bell-ring"></i></span>
           <span data-i18n="nav_ai_alerts">AI Alerts</span>
           <span class="nav-badge" id="alertBadge">3</span>
-        </div>
-        <div class="nav-item" data-page="staff" id="navStaff">
+        </button>
+        <button class="nav-item" data-page="staff" id="navStaff">
           <span class="nav-icon"><i data-lucide="hard-hat"></i></span>
           <span data-i18n="nav_staff_deploy">Staff Deploy</span>
-        </div>
+        </button>
       </nav>
 
       <!-- Sidebar Footer -->
       <div class="sidebar-footer">
         <div class="custom-dropdown venue-dropdown" id="venueDropdown">
-          <div class="dropdown-trigger">
+          <button class="dropdown-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Stadium">
             <span>MetLife Stadium — NY/NJ</span>
             <i data-lucide="chevron-down" style="width:14px;height:14px;opacity:0.7;"></i>
-          </div>
-          <div class="dropdown-menu">
-            <div class="dropdown-item active" data-value="metlife">MetLife Stadium — NY/NJ</div>
-            <div class="dropdown-item" data-value="sofi">SoFi Stadium — Los Angeles</div>
-            <div class="dropdown-item" data-value="att">AT&T Stadium — Dallas</div>
-            <div class="dropdown-item" data-value="hard-rock">Hard Rock Stadium — Miami</div>
-            <div class="dropdown-item" data-value="nrg">NRG Stadium — Houston</div>
-            <div class="dropdown-item" data-value="lumen">Lumen Field — Seattle</div>
-            <div class="dropdown-item" data-value="lincoln">Lincoln Financial — Philadelphia</div>
-            <div class="dropdown-item" data-value="arrowhead">GEHA Field — Kansas City</div>
-            <div class="dropdown-item" data-value="gillette">Gillette Stadium — Boston</div>
-            <div class="dropdown-item" data-value="mercedes">Mercedes-Benz — Atlanta</div>
-            <div class="dropdown-item" data-value="levis">Levi's Stadium — Bay Area</div>
-            <div class="dropdown-item" data-value="azteca">Estadio Azteca — Mexico City</div>
-            <div class="dropdown-item" data-value="guadalajara">Estadio Akron — Guadalajara</div>
-            <div class="dropdown-item" data-value="monterrey">Estadio BBVA — Monterrey</div>
-            <div class="dropdown-item" data-value="bmo">BMO Field — Toronto</div>
-            <div class="dropdown-item" data-value="bc-place">BC Place — Vancouver</div>
+          </button>
+          <div class="dropdown-menu" role="listbox">
+            <button type="button" class="dropdown-item active" data-value="metlife" role="option" aria-selected="true" tabindex="0">MetLife Stadium — NY/NJ</button>
+            <button type="button" class="dropdown-item" data-value="sofi" role="option" aria-selected="false" tabindex="-1">SoFi Stadium — Los Angeles</button>
+            <button type="button" class="dropdown-item" data-value="att" role="option" aria-selected="false" tabindex="-1">AT&T Stadium — Dallas</button>
+            <button type="button" class="dropdown-item" data-value="hard-rock" role="option" aria-selected="false" tabindex="-1">Hard Rock Stadium — Miami</button>
+            <button type="button" class="dropdown-item" data-value="nrg" role="option" aria-selected="false" tabindex="-1">NRG Stadium — Houston</button>
+            <button type="button" class="dropdown-item" data-value="lumen" role="option" aria-selected="false" tabindex="-1">Lumen Field — Seattle</button>
+            <button type="button" class="dropdown-item" data-value="lincoln" role="option" aria-selected="false" tabindex="-1">Lincoln Financial — Philadelphia</button>
+            <button type="button" class="dropdown-item" data-value="arrowhead" role="option" aria-selected="false" tabindex="-1">GEHA Field — Kansas City</button>
+            <button type="button" class="dropdown-item" data-value="gillette" role="option" aria-selected="false" tabindex="-1">Gillette Stadium — Boston</button>
+            <button type="button" class="dropdown-item" data-value="mercedes" role="option" aria-selected="false" tabindex="-1">Mercedes-Benz — Atlanta</button>
+            <button type="button" class="dropdown-item" data-value="levis" role="option" aria-selected="false" tabindex="-1">Levi's Stadium — Bay Area</button>
+            <button type="button" class="dropdown-item" data-value="azteca" role="option" aria-selected="false" tabindex="-1">Estadio Azteca — Mexico City</button>
+            <button type="button" class="dropdown-item" data-value="guadalajara" role="option" aria-selected="false" tabindex="-1">Estadio Akron — Guadalajara</button>
+            <button type="button" class="dropdown-item" data-value="monterrey" role="option" aria-selected="false" tabindex="-1">Estadio BBVA — Monterrey</button>
+            <button type="button" class="dropdown-item" data-value="bmo" role="option" aria-selected="false" tabindex="-1">BMO Field — Toronto</button>
+            <button type="button" class="dropdown-item" data-value="bc-place" role="option" aria-selected="false" tabindex="-1">BC Place — Vancouver</button>
           </div>
         </div>
         <div class="live-indicator">
@@ -136,21 +137,21 @@
         <div class="header-right">
           <div class="header-clock" id="headerClock">--:--:--</div>
           <div class="custom-dropdown" id="langDropdown">
-            <div class="dropdown-trigger">
+            <button class="dropdown-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Language">
               <span>🌐 English</span>
               <i data-lucide="chevron-down" style="width:12px;height:12px;opacity:0.7;"></i>
-            </div>
-            <div class="dropdown-menu">
-              <div class="dropdown-item active" data-value="en">English</div>
-              <div class="dropdown-item" data-value="es">Español</div>
-              <div class="dropdown-item" data-value="fr">Français</div>
-              <div class="dropdown-item" data-value="pt">Português</div>
-              <div class="dropdown-item" data-value="ar">العربية</div>
-              <div class="dropdown-item" data-value="zh">中文</div>
-              <div class="dropdown-item" data-value="ja">日本語</div>
-              <div class="dropdown-item" data-value="ko">한국어</div>
-              <div class="dropdown-item" data-value="de">Deutsch</div>
-              <div class="dropdown-item" data-value="hi">हिन्दी</div>
+            </button>
+            <div class="dropdown-menu" role="listbox">
+              <button type="button" class="dropdown-item active" data-value="en" role="option" aria-selected="true" tabindex="0">English</button>
+              <button type="button" class="dropdown-item" data-value="es" role="option" aria-selected="false" tabindex="-1">Español</button>
+              <button type="button" class="dropdown-item" data-value="fr" role="option" aria-selected="false" tabindex="-1">Français</button>
+              <button type="button" class="dropdown-item" data-value="pt" role="option" aria-selected="false" tabindex="-1">Português</button>
+              <button type="button" class="dropdown-item" data-value="ar" role="option" aria-selected="false" tabindex="-1">العربية</button>
+              <button type="button" class="dropdown-item" data-value="zh" role="option" aria-selected="false" tabindex="-1">中文</button>
+              <button type="button" class="dropdown-item" data-value="ja" role="option" aria-selected="false" tabindex="-1">日本語</button>
+              <button type="button" class="dropdown-item" data-value="ko" role="option" aria-selected="false" tabindex="-1">한국어</button>
+              <button type="button" class="dropdown-item" data-value="de" role="option" aria-selected="false" tabindex="-1">Deutsch</button>
+              <button type="button" class="dropdown-item" data-value="hi" role="option" aria-selected="false" tabindex="-1">हिन्दी</button>
             </div>
           </div>
           <button class="header-btn tooltip" data-tooltip="Notifications" id="notifBtn" aria-label="Notifications">
@@ -191,7 +192,7 @@
                   </button>
                 </div>
               </div>
-              <div class="chat-messages" id="chatMessages">
+              <div class="chat-messages" id="chatMessages" aria-live="polite" role="log" aria-label="Chat messages history">
                 <!-- Messages injected by JS -->
               </div>
               <div class="quick-actions" id="quickActions">
@@ -201,11 +202,12 @@
                 <button class="quick-action-chip" data-query="What are the accessibility services available?" data-i18n="chip_accessibility">♿ Accessibility</button>
                 <button class="quick-action-chip" data-query="What is the current match score?" data-i18n="chip_match_info">⚽ Match Info</button>
                 <button class="quick-action-chip" data-query="Where can I find first aid?" data-i18n="chip_first_aid">🏥 First Aid</button>
-                <button class="quick-action-chip" data-query="What is the best way to leave after the match?" data-i18n="chip_exit_plan">🚗 Exit Plan</button>
-                <button class="quick-action-chip" data-query="Tell me about this stadium" data-i18n="chip_stadium_info">🏟️ Stadium Info</button>
+                <button class="quick-action-chip" data-query="What is the best way to leave after the match?" data-i18n="chip_exit_plan"><span role="img" aria-label="car">🚗</span> Exit Plan</button>
+                <button class="quick-action-chip" data-query="Tell me about this stadium" data-i18n="chip_stadium_info"><span role="img" aria-label="stadium">🏟️</span> Stadium Info</button>
               </div>
               <div class="chat-input-area">
                 <div class="chat-input-wrapper">
+                  <label for="chatInput" class="sr-only">Ask StadiumAI Concierge</label>
                   <input type="text" id="chatInput" placeholder="Ask me anything about the stadium..." autocomplete="off" data-i18n="placeholder_chat" aria-label="Ask chat concierge">
                   <button class="chat-send-btn" id="chatSendBtn" disabled aria-label="Send message">
                     <i data-lucide="send" style="width:18px;height:18px;"></i>
@@ -218,15 +220,15 @@
             <div class="chat-sidebar">
               <!-- Live Match Card -->
               <div class="info-card">
-                <div class="info-title" data-i18n="card_live_match">⚽ Live Match</div>
+                <div class="info-title" data-i18n="card_live_match"><span role="img" aria-label="soccer ball">⚽</span> Live Match</div>
                 <div class="match-teams">
                   <div class="team">
-                    <div class="team-flag">🇧🇷</div>
+                    <div class="team-flag" aria-hidden="true">🇧🇷</div>
                     <div class="team-name" data-i18n="team_brazil">Brazil</div>
                   </div>
                   <div class="match-vs" data-i18n="match_vs">VS</div>
                   <div class="team">
-                    <div class="team-flag">🇫🇷</div>
+                    <div class="team-flag" aria-hidden="true">🇫🇷</div>
                     <div class="team-name" data-i18n="team_france">France</div>
                   </div>
                 </div>
@@ -349,34 +351,34 @@
         <!-- Accessibility Page -->
         <div class="page" id="pageAccessibilityPage" data-page="accessibility">
           <div class="section-header mb-lg">
-            <h2 class="section-title">♿ <span data-i18n="title_accessibility">Accessibility Hub</span></h2>
+            <h2 class="section-title"><span role="img" aria-label="accessibility logo">♿</span> <span data-i18n="title_accessibility">Accessibility Hub</span></h2>
             <span class="badge green">ALL SERVICES ACTIVE</span>
           </div>
           <div class="grid-2 mb-xl">
             <div class="glass-card">
               <div class="card-header">
-                <span class="card-title"><span class="card-icon">🦽</span> Accessible Navigation</span>
+                <span class="card-title"><span class="card-icon" role="img" aria-label="wheelchair icon">🦽</span> Accessible Navigation</span>
               </div>
               <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-md);">
                 All routes below avoid stairs and include elevator/ramp access.
               </p>
               <div style="display:flex;flex-direction:column;gap:8px;">
                 <div class="alert-card info">
-                  <div class="alert-icon">🛗</div>
+                  <div class="alert-icon" role="img" aria-label="elevator icon">🛗</div>
                   <div class="alert-content">
                     <div class="alert-title">Elevators</div>
                     <div class="alert-message">4 elevators available. Nearest: Gate B (30m). All operational.</div>
                   </div>
                 </div>
                 <div class="alert-card success">
-                  <div class="alert-icon">🔄</div>
+                  <div class="alert-icon" role="img" aria-label="ramp icon">🔄</div>
                   <div class="alert-content">
                     <div class="alert-title">Ramps</div>
                     <div class="alert-message">8 ramp access points across all levels. Slope ≤ 1:12 grade.</div>
                   </div>
                 </div>
                 <div class="alert-card info">
-                  <div class="alert-icon">🅿️</div>
+                  <div class="alert-icon" role="img" aria-label="parking icon">🅿️</div>
                   <div class="alert-content">
                     <div class="alert-title">Accessible Parking</div>
                     <div class="alert-message">Lot A & B — 120 accessible spots. 23 currently available.</div>
@@ -386,32 +388,32 @@
             </div>
             <div class="glass-card">
               <div class="card-header">
-                <span class="card-title"><span class="card-icon">🔇</span> Sensory Services</span>
+                <span class="card-title"><span class="card-icon" role="img" aria-label="muted volume icon">🔇</span> Sensory Services</span>
               </div>
               <div style="display:flex;flex-direction:column;gap:8px;">
                 <div class="alert-card success">
-                  <div class="alert-icon">🤫</div>
+                  <div class="alert-icon" role="img" aria-label="shushing face icon">🤫</div>
                   <div class="alert-content">
                     <div class="alert-title">Sensory Room</div>
                     <div class="alert-message">Level 1, near Gate C. Quiet space with dimmed lighting. Currently available.</div>
                   </div>
                 </div>
                 <div class="alert-card info">
-                  <div class="alert-icon">📝</div>
+                  <div class="alert-icon" role="img" aria-label="clipboard icon">📝</div>
                   <div class="alert-content">
                     <div class="alert-title">Live Captioning</div>
                     <div class="alert-message">PA announcements are live-captioned on your app and venue screens.</div>
                   </div>
                 </div>
                 <div class="alert-card info">
-                  <div class="alert-icon">🎧</div>
+                  <div class="alert-icon" role="img" aria-label="headphones icon">🎧</div>
                   <div class="alert-content">
                     <div class="alert-title">Audio Description</div>
                     <div class="alert-message">Match audio description available on FM 87.7 and in-app streaming.</div>
                   </div>
                 </div>
                 <div class="alert-card success">
-                  <div class="alert-icon">🐕‍🦺</div>
+                  <div class="alert-icon" role="img" aria-label="service dog icon">🐕‍🦺</div>
                   <div class="alert-content">
                     <div class="alert-title">Service Animal Areas</div>
                     <div class="alert-message">Relief areas at Gates A, D, F. Water stations available.</div>
@@ -422,10 +424,10 @@
           </div>
           <div class="glass-card">
             <div class="card-header">
-              <span class="card-title"><span class="card-icon">📢</span> Live PA Transcription</span>
+              <span class="card-title"><span class="card-icon" role="img" aria-label="megaphone icon">📢</span> Live PA Transcription</span>
               <span class="badge cyan">LIVE</span>
             </div>
-            <div id="paTranscription" style="font-family:var(--font-mono); font-size:var(--text-sm); color:var(--color-text-secondary); line-height: 2; max-height: 150px; overflow-y: auto; padding: var(--space-md); background: var(--color-bg-tertiary); border-radius: var(--radius-md);">
+            <div id="paTranscription" aria-live="polite" role="log" aria-label="PA announcements transcription history" style="font-family:var(--font-mono); font-size:var(--text-sm); color:var(--color-text-secondary); line-height: 2; max-height: 150px; overflow-y: auto; padding: var(--space-md); background: var(--color-bg-tertiary); border-radius: var(--radius-md);">
               <div>[18:45] 🔊 Welcome to MetLife Stadium! Today's match: Brazil vs France, Group Stage.</div>
               <div>[18:52] 🔊 Reminder: Accessible seating assistance available at all Guest Services desks.</div>
               <div>[19:01] 🔊 The match will begin in approximately 10 minutes. Please find your seats.</div>
@@ -437,29 +439,29 @@
         <!-- Transport Page -->
         <div class="page" id="pageTransportPage" data-page="transport">
           <div class="section-header mb-lg">
-            <h2 class="section-title">🚗 <span data-i18n="title_transport">Transportation Hub</span></h2>
+            <h2 class="section-title"><span role="img" aria-label="car">🚗</span> <span data-i18n="title_transport">Transportation Hub</span></h2>
           </div>
           <div class="grid-4 mb-xl" id="transportStats">
             <div class="stat-card">
-              <div class="stat-icon cyan">🅿️</div>
+              <div class="stat-icon cyan" role="img" aria-label="parking">🅿️</div>
               <div class="stat-value" id="parkingAvail">2,340</div>
               <div class="stat-label" data-i18n="lbl_parking_spots">Parking Spots Available</div>
               <div class="stat-change down" data-i18n="lbl_filling_fast">▼ Filling fast</div>
             </div>
             <div class="stat-card">
-              <div class="stat-icon emerald">🚇</div>
+              <div class="stat-icon emerald" role="img" aria-label="subway">🚇</div>
               <div class="stat-value" id="nextTrain">4 min</div>
               <div class="stat-label" data-i18n="lbl_next_train">Next Train Arrival</div>
               <div class="stat-change up" data-i18n="lbl_on_schedule">▲ On schedule</div>
             </div>
             <div class="stat-card">
-              <div class="stat-icon gold">🚕</div>
+              <div class="stat-icon gold" role="img" aria-label="taxi">🚕</div>
               <div class="stat-value" id="rideshareWait">~12 min</div>
               <div class="stat-label" data-i18n="lbl_rideshare_wait">Rideshare Avg Wait</div>
               <div class="stat-change down" data-i18n="lbl_surge_pricing">▲ Surge pricing</div>
             </div>
             <div class="stat-card">
-              <div class="stat-icon purple">🚌</div>
+              <div class="stat-icon purple" role="img" aria-label="bus">🚌</div>
               <div class="stat-value" id="shuttleNext">8 min</div>
               <div class="stat-label" data-i18n="lbl_next_shuttle">Next Shuttle</div>
               <div class="stat-change up" data-i18n="lbl_running_normally">▲ Running normally</div>
@@ -478,12 +480,12 @@
               <div class="card-header">
                 <span class="card-title" data-i18n="card_public_transit"><span class="card-icon">🚆</span> Public Transit</span>
               </div>
-              <table class="data-table">
+              <table class="data-table" aria-label="Transit departures schedule">
                 <thead>
                   <tr>
-                    <th data-i18n="th_route">Route</th>
-                    <th data-i18n="th_next">Next</th>
-                    <th data-i18n="th_status">Status</th>
+                    <th scope="col" data-i18n="th_route">Route</th>
+                    <th scope="col" data-i18n="th_next">Next</th>
+                    <th scope="col" data-i18n="th_status">Status</th>
                   </tr>
                 </thead>
                 <tbody id="transitTable">
@@ -815,10 +817,10 @@
   <div id="toastContainer"></div>
 
   <!-- Settings Modal -->
-  <div id="settingsModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:999; display:none; align-items:center; justify-content:center;">
+  <div id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:999; display:none; align-items:center; justify-content:center;">
     <div class="glass-card" style="width:400px; max-width:90vw;">
       <div class="card-header">
-        <span class="card-title">⚙️ Settings</span>
+        <span class="card-title" id="settingsTitle"><span role="img" aria-label="gear">⚙️</span> Settings</span>
         <button id="closeSettings" style="font-size:1.2rem; color:var(--color-text-muted);" aria-label="Close Settings">✕</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:var(--space-lg);">

@@ -3,6 +3,8 @@
    Links UI commands to path drawing on the stadium map
    ============================================================ */
 
+import { escapeHTML } from './security.js';
+
 export class WayfindingManager {
   constructor(mapInstance) {
     this.map = mapInstance;
@@ -68,13 +70,14 @@ export class WayfindingManager {
     if (container) {
       const toast = document.createElement('div');
       toast.className = 'toast toast-slide-in';
+      const routeType = this.accessibleMode ? 'Accessible Route' : 'Fastest Route';
       toast.innerHTML = `
         <div class="toast-icon">🧭</div>
         <div class="toast-content">
           <div class="toast-title">Route Plotted</div>
-          <div class="toast-message">Path shown to destination (${this.accessibleMode ? 'Accessible Route' : 'Fastest Route'}).</div>
+          <div class="toast-message">Path shown to destination (${escapeHTML(routeType)}).</div>
         </div>
-        <button class="toast-close">✕</button>
+        <button class="toast-close" aria-label="Dismiss notification">✕</button>
       `;
       toast.querySelector('.toast-close').addEventListener('click', () => toast.remove());
       container.appendChild(toast);

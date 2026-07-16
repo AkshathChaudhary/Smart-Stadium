@@ -67,7 +67,9 @@ describe('Smart Stadium Integration Tests', () => {
     saveBtn.click();
 
     // Verify CRUD (Read/Update): settings correctly stored in localStorage and bound to controller
-    expect(localStorage.getItem('stadiumai_api_key')).toBe('AIzaSyValidIntegrationKey');
+    const stored = JSON.parse(localStorage.getItem('stadiumai_api_key'));
+    expect(stored).toBeDefined();
+    expect(decodeURIComponent(atob(stored.v))).toBe('AIzaSyValidIntegrationKey');
     expect(app.gemini.apiKey).toBe('AIzaSyValidIntegrationKey');
     expect(app.gemini.isAvailable).toBe(true);
 

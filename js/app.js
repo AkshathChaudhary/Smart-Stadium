@@ -14,6 +14,8 @@ import { CrowdAnalytics } from './crowd-analytics.js';
 import { SustainabilityAnalytics } from './sustainability.js';
 import { AlertSystem } from './alerts.js';
 
+import { sanitizeInput, validateApiKey, logger, validateEnvironment } from './security.js';
+
 class AppController {
   constructor() {
     this.currentMode = 'fan'; // 'fan' or 'ops'
@@ -34,10 +36,13 @@ class AppController {
     this.sustainabilityCharts = null;
     this.alerts = null;
 
+    // Run environment validation check
+    validateEnvironment();
+
     // Settings
     this.settings = {
-      apiKey: localStorage.getItem("stadiumai_apikey") || "",
-      refreshRate: parseInt(localStorage.getItem("stadiumai_refresh")) || 2000,
+      apiKey: this.gemini.apiKey || localStorage.getItem('stadiumai_apikey') || localStorage.getItem('stadiumai_api_key') || "",
+      refreshRate: parseInt(this.gemini.storage.get("refresh_rate")) || parseInt(localStorage.getItem('stadiumai_refresh')) || 5000,
     };
 
     // Tracking active hover state for real-time count updates
@@ -45,7 +50,6 @@ class AppController {
     this.activeHoverZoneConfig = null;
 
     if (this.settings.apiKey) {
-      this.gemini.setApiKey(this.settings.apiKey);
       const apiKeyInput = document.getElementById('apiKeyInput');
       if (apiKeyInput) apiKeyInput.value = this.settings.apiKey;
     }
@@ -81,7 +85,7 @@ class AppController {
     // 3. Connect Data Stream
     this.simulator.on('snapshot', (data) => this.handleDataSnapshot(data));
     this.simulator.on('alerts', (alertList) => this.alerts.setAlerts(alertList));
-    this.simulator.start();
+    this.simulator.start(this.settings.refreshRate);
 
     // 4. Trigger Lucide Icons
     lucide.createIcons();
@@ -390,25 +394,79 @@ class AppController {
     const rate = document.getElementById('refreshRate');
     const key = document.getElementById('apiKeyInput');
 
-    btn?.addEventListener('click', () => {
+    const openModal = () => {
       modal.style.display = 'flex';
-    });
+      // Focus first interactive element inside modal
+      const firstFocusable = modal.querySelector('input, select, button, [tabindex]:not([tabindex="-1"])');
+      if (firstFocusable) firstFocusable.focus();
+    };
 
-    close?.addEventListener('click', () => {
+    const closeModal = () => {
       modal.style.display = 'none';
+      // Restore focus to the trigger button
+      btn?.focus();
+    };
+
+    btn?.addEventListener('click', openModal);
+    close?.addEventListener('click', closeModal);
+
+    // Close on click outside the card
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
     });
 
-    // Close on click outside
-    modal?.addEventListener('click', (e) => {
-      if (e.target === modal) modal.style.display = 'none';
+    // Focus trap + Escape key
+    modal?.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+        return;
+      }
+
+      if (e.key === 'Tab') {
+        const focusableEls = modal.querySelectorAll(
+          'input, select, button, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusableEls.length === 0) return;
+
+        const firstEl = focusableEls[0];
+        const lastEl = focusableEls[focusableEls.length - 1];
+
+        if (e.shiftKey) {
+          // Shift+Tab: wrap from first to last
+          if (document.activeElement === firstEl) {
+            e.preventDefault();
+            lastEl.focus();
+          }
+        } else {
+          // Tab: wrap from last to first
+          if (document.activeElement === lastEl) {
+            e.preventDefault();
+            firstEl.focus();
+          }
+        }
+      }
     });
 
     save?.addEventListener('click', () => {
-      if (key.value) {
-        this.gemini.setApiKey(key.value);
+      const keyVal = key.value.trim();
+      if (keyVal) {
+        const validation = validateApiKey(keyVal);
+        if (!validation.valid) {
+          this.alerts.showToast('⚠️ Invalid API Key', validation.error, 'warning');
+          return;
+        }
+        this.gemini.setApiKey(keyVal);
       }
-      this.simulator.setRefreshRate(parseInt(rate.value));
-      modal.style.display = 'none';
+      
+      const parsedRate = parseInt(rate.value);
+      if (isNaN(parsedRate) || parsedRate < 1000 || parsedRate > 60000) {
+        this.alerts.showToast('⚠️ Invalid Rate', 'Refresh rate must be between 1 and 60 seconds.', 'warning');
+        return;
+      }
+
+      this.simulator.setRefreshRate(parsedRate);
+      this.gemini.storage.set("refresh_rate", parsedRate.toString());
+      closeModal();
       this.alerts.showToast('💾 Settings Saved', 'StadiumAI settings updated successfully.', 'success');
     });
   }
@@ -417,72 +475,134 @@ class AppController {
     const langDropdown = document.getElementById('langDropdown');
     const venueDropdown = document.getElementById('venueDropdown');
 
-    // 1. Language Dropdown Controller
-    if (langDropdown) {
-      const trigger = langDropdown.querySelector('.dropdown-trigger');
+    // Helper: make a dropdown fully keyboard-accessible
+    const makeAccessible = (dropdown, onSelect) => {
+      if (!dropdown) return;
+      const trigger = dropdown.querySelector('.dropdown-trigger');
       const triggerText = trigger.querySelector('span');
+      const items = () => [...dropdown.querySelectorAll('.dropdown-item')];
 
+      const openDropdown = () => {
+        dropdown.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+        // Focus the active item, or first item
+        const active = dropdown.querySelector('.dropdown-item.active') || items()[0];
+        active?.focus();
+      };
+
+      const closeDropdown = (restoreFocus = true) => {
+        dropdown.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+        if (restoreFocus) trigger.focus();
+      };
+
+      const isOpen = () => dropdown.classList.contains('open');
+
+      // Click to toggle
       trigger.addEventListener('click', (e) => {
         e.stopPropagation();
-        langDropdown.classList.toggle('open');
-        venueDropdown?.classList.remove('open');
+        if (isOpen()) {
+          closeDropdown();
+        } else {
+          // Close sibling dropdowns
+          [langDropdown, venueDropdown].forEach(d => {
+            if (d && d !== dropdown) {
+              d.classList.remove('open');
+              d.querySelector('.dropdown-trigger')?.setAttribute('aria-expanded', 'false');
+            }
+          });
+          openDropdown();
+        }
       });
 
-      langDropdown.querySelectorAll('.dropdown-item').forEach(item => {
+      // Keyboard on trigger
+      trigger.addEventListener('keydown', (e) => {
+        if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(e.key)) {
+          e.preventDefault();
+          if (!isOpen()) openDropdown();
+        }
+      });
+
+      // Item click handler
+      items().forEach(item => {
         item.addEventListener('click', () => {
-          const lang = item.getAttribute('data-value');
-
-          // Active item states
-          langDropdown.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('active'));
+          // Update active states
+          items().forEach(el => {
+            el.classList.remove('active');
+            el.setAttribute('aria-selected', 'false');
+            el.setAttribute('tabindex', '-1');
+          });
           item.classList.add('active');
+          item.setAttribute('aria-selected', 'true');
+          item.setAttribute('tabindex', '0');
 
-          // Update trigger label
-          triggerText.textContent = `🌐 ${item.textContent}`;
-          langDropdown.classList.remove('open');
+          closeDropdown();
+          onSelect(item, triggerText);
+        });
 
-          // Dispatch translation
-          this.i18n.setLanguage(lang);
-          this.chatManager.setLanguage(lang);
-          this.chatManager.addWelcomeMessage();
-          this.updateTitles();
-          this.switchPage(this.currentPage);
-          this.i18n.translateDOM();
+        // Keyboard navigation within items
+        item.addEventListener('keydown', (e) => {
+          const list = items();
+          const idx = list.indexOf(item);
+
+          switch (e.key) {
+            case 'ArrowDown':
+              e.preventDefault();
+              list[(idx + 1) % list.length]?.focus();
+              break;
+            case 'ArrowUp':
+              e.preventDefault();
+              list[(idx - 1 + list.length) % list.length]?.focus();
+              break;
+            case 'Enter':
+            case ' ':
+              e.preventDefault();
+              item.click();
+              break;
+            case 'Escape':
+              e.preventDefault();
+              closeDropdown();
+              break;
+            case 'Home':
+              e.preventDefault();
+              list[0]?.focus();
+              break;
+            case 'End':
+              e.preventDefault();
+              list[list.length - 1]?.focus();
+              break;
+          }
         });
       });
-    }
+    };
 
-    // 2. Venue Dropdown Controller
-    if (venueDropdown) {
-      const trigger = venueDropdown.querySelector('.dropdown-trigger');
-      const triggerText = trigger.querySelector('span');
+    // 1. Language Dropdown
+    makeAccessible(langDropdown, (item, triggerText) => {
+      const lang = item.getAttribute('data-value');
+      triggerText.textContent = `🌐 ${item.textContent}`;
+      this.i18n.setLanguage(lang);
+      this.chatManager.setLanguage(lang);
+      this.chatManager.addWelcomeMessage();
+      this.updateTitles();
+      this.switchPage(this.currentPage);
+      this.i18n.translateDOM();
+    });
 
-      trigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        venueDropdown.classList.toggle('open');
-        langDropdown?.classList.remove('open');
-      });
+    // 2. Venue Dropdown
+    makeAccessible(venueDropdown, (item, triggerText) => {
+      triggerText.textContent = item.textContent;
+      this.gemini.setVenueContext(item.textContent);
+      this.alerts.showToast('🏟️ Stadium Context Updated', `System optimized for ${item.textContent}.`, 'success');
+    });
 
-      venueDropdown.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', () => {
-          // Active item states
-          venueDropdown.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('active'));
-          item.classList.add('active');
-
-          // Update trigger label
-          triggerText.textContent = item.textContent;
-          venueDropdown.classList.remove('open');
-
-          // Dynamically override stadium context inside chat agent
-          this.gemini.setVenueContext(item.textContent);
-          this.alerts.showToast('🏟️ Stadium Context Updated', `System optimized for ${item.textContent}.`, 'success');
-        });
-      });
-    }
-
-    // 3. Document level click-outside closer
+    // 3. Document-level click-outside closer
     document.addEventListener('click', () => {
-      langDropdown?.classList.remove('open');
-      venueDropdown?.classList.remove('open');
+      [langDropdown, venueDropdown].forEach(d => {
+        if (d) {
+          d.classList.remove('open');
+          d.querySelector('.dropdown-trigger')?.setAttribute('aria-expanded', 'false');
+        }
+      });
     });
   }
 

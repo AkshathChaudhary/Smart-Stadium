@@ -3,6 +3,8 @@
    Updates transport stats, parking tables, and transit timings
    ============================================================ */
 
+import { escapeHTML } from './security.js';
+
 export class TransportManager {
   constructor() {
     this.parkingAvail = document.getElementById('parkingAvail');
@@ -64,25 +66,30 @@ export class TransportManager {
 
     // Dynamically update transit listings
     if (this.transitTable) {
+      const nextTrainEscaped = escapeHTML(t.nextTrain);
+      const nextShuttleEscaped = escapeHTML(t.nextShuttle);
+      const route160Time = escapeHTML(t.nextTrain + 7);
+      const route165Time = escapeHTML(t.nextTrain + 14);
+
       this.transitTable.innerHTML = `
         <tr>
           <td>🚇 NJ Transit — Meadowlands Line</td>
-          <td style="font-family:var(--font-mono);">${t.nextTrain} min</td>
+          <td style="font-family:var(--font-mono);">${nextTrainEscaped} min</td>
           <td><span class="badge green">On Time</span></td>
         </tr>
         <tr>
           <td>🚌 Route 160 — Port Authority</td>
-          <td style="font-family:var(--font-mono);">${t.nextTrain + 7} min</td>
+          <td style="font-family:var(--font-mono);">${route160Time} min</td>
           <td><span class="badge green">On Time</span></td>
         </tr>
         <tr>
           <td>🚌 Route 165 — GWB Terminal</td>
-          <td style="font-family:var(--font-mono);">${t.nextTrain + 14} min</td>
+          <td style="font-family:var(--font-mono);">${route165Time} min</td>
           <td><span class="badge yellow">Delayed</span></td>
         </tr>
         <tr>
           <td>🚌 Shuttle — Secaucus Junction</td>
-          <td style="font-family:var(--font-mono);">${t.nextShuttle} min</td>
+          <td style="font-family:var(--font-mono);">${nextShuttleEscaped} min</td>
           <td><span class="badge green">On Time</span></td>
         </tr>
       `;

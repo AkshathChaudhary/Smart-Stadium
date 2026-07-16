@@ -3,6 +3,8 @@
    Renders user/AI messages and interfaces with GeminiService
    ============================================================ */
 
+import { sanitizeInput, escapeHTML } from './security.js';
+
 export class ChatManager {
   constructor(geminiService) {
     this.gemini = geminiService;
@@ -83,7 +85,11 @@ export class ChatManager {
   }
 
   async handleSend() {
-    const message = this.input.value.trim();
+    const rawMessage = this.input.value.trim();
+    if (!rawMessage) return;
+
+    // Sanitize user input before processing
+    const message = sanitizeInput(rawMessage);
     if (!message) return;
 
     // 1. Add user message
@@ -113,7 +119,7 @@ export class ChatManager {
     const avatar = sender === 'ai' ? '🤖' : '👤';
 
     // Escape HTML first to prevent XSS
-    const escapedText = this.escapeHTML(text);
+    const escapedText = escapeHTML(text);
     // Render markdown headings and list elements
     const formattedText = this.formatMarkdown(escapedText);
 
@@ -130,13 +136,7 @@ export class ChatManager {
   }
 
   escapeHTML(str) {
-    if (!str) return '';
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+    return escapeHTML(str);
   }
 
   addTypingIndicator() {

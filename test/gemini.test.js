@@ -22,7 +22,10 @@ describe('GeminiService Unit Tests', () => {
     service.setApiKey('AIzaSyValidApiKeyForGeminiTesting');
     expect(service.isAvailable).toBe(true);
     expect(service.apiKey).toBe('AIzaSyValidApiKeyForGeminiTesting');
-    expect(localStorage.getItem('stadiumai_api_key')).toBe('AIzaSyValidApiKeyForGeminiTesting');
+    const stored = JSON.parse(localStorage.getItem('stadiumai_api_key'));
+    expect(stored).toBeDefined();
+    expect(stored.s).toBe(true);
+    expect(decodeURIComponent(atob(stored.v))).toBe('AIzaSyValidApiKeyForGeminiTesting');
   });
 
   test('should fallback to mock key length is short', () => {
