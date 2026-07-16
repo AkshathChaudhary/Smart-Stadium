@@ -112,8 +112,10 @@ export class ChatManager {
     const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const avatar = sender === 'ai' ? '🤖' : '👤';
 
+    // Escape HTML first to prevent XSS
+    const escapedText = this.escapeHTML(text);
     // Render markdown headings and list elements
-    const formattedText = this.formatMarkdown(text);
+    const formattedText = this.formatMarkdown(escapedText);
 
     msg.innerHTML = `
       <div class="message-avatar">${avatar}</div>
@@ -125,6 +127,16 @@ export class ChatManager {
 
     this.messagesContainer.appendChild(msg);
     this.scrollToBottom();
+  }
+
+  escapeHTML(str) {
+    if (!str) return '';
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 
   addTypingIndicator() {

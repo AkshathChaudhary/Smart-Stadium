@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://generativelanguage.googleapis.com; img-src 'self' data:;">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="StadiumAI Command — GenAI-powered Smart Stadium Platform for FIFA World Cup 2026. Real-time crowd intelligence, multilingual fan assistance, sustainability tracking, and operational decision support.">
   <title>StadiumAI Command | FIFA World Cup 2026 Smart Stadium</title>
@@ -124,7 +125,7 @@
       <!-- Top Header -->
       <header class="top-header">
         <div class="header-left">
-          <button class="header-btn" id="menuToggle" style="display:none;">
+          <button class="header-btn" id="menuToggle" style="display:none;" aria-label="Toggle Navigation Menu">
             <i data-lucide="menu" style="width:18px;height:18px;"></i>
           </button>
           <div>
@@ -152,14 +153,14 @@
               <div class="dropdown-item" data-value="hi">हिन्दी</div>
             </div>
           </div>
-          <button class="header-btn tooltip" data-tooltip="Notifications" id="notifBtn">
+          <button class="header-btn tooltip" data-tooltip="Notifications" id="notifBtn" aria-label="Notifications">
             <i data-lucide="bell" style="width:18px;height:18px;"></i>
             <span class="notification-dot"></span>
           </button>
-          <button class="header-btn tooltip" data-tooltip="Settings" id="settingsBtn">
+          <button class="header-btn tooltip" data-tooltip="Settings" id="settingsBtn" aria-label="Settings">
             <i data-lucide="settings" style="width:18px;height:18px;"></i>
           </button>
-          <button class="header-btn tooltip" data-tooltip="Toggle Theme" id="themeToggle">
+          <button class="header-btn tooltip" data-tooltip="Toggle Theme" id="themeToggle" aria-label="Toggle Light/Dark Theme">
             <i data-lucide="sun" style="width:18px;height:18px;"></i>
           </button>
         </div>
@@ -205,8 +206,8 @@
               </div>
               <div class="chat-input-area">
                 <div class="chat-input-wrapper">
-                  <input type="text" id="chatInput" placeholder="Ask me anything about the stadium..." autocomplete="off" data-i18n="placeholder_chat">
-                  <button class="chat-send-btn" id="chatSendBtn" disabled>
+                  <input type="text" id="chatInput" placeholder="Ask me anything about the stadium..." autocomplete="off" data-i18n="placeholder_chat" aria-label="Ask chat concierge">
+                  <button class="chat-send-btn" id="chatSendBtn" disabled aria-label="Send message">
                     <i data-lucide="send" style="width:18px;height:18px;"></i>
                   </button>
                 </div>
@@ -308,7 +309,7 @@
                 <span class="badge cyan">LIVE</span>
               </div>
               <div class="heatmap-container" id="navMapContainer">
-                <svg id="navigationMap" class="heatmap-svg" viewBox="0 0 800 500"></svg>
+                <svg id="navigationMap" class="heatmap-svg" viewBox="0 0 800 500" role="img" aria-label="Interactive wayfinding map"></svg>
               </div>
               <div class="heatmap-legend">
                 <div class="legend-item"><div class="legend-color low"></div><span>Low Traffic</span></div>
@@ -559,7 +560,7 @@
                 <span class="badge cyan">LIVE</span>
               </div>
               <div class="heatmap-container" id="heatmapContainer">
-                <svg id="stadiumHeatmap" class="heatmap-svg" viewBox="0 0 800 500"></svg>
+                <svg id="stadiumHeatmap" class="heatmap-svg" viewBox="0 0 800 500" role="img" aria-label="Live crowd density heatmap"></svg>
                 <div class="zone-popup" id="zonePopup">
                   <div class="zone-name" id="popupZoneName">Zone A</div>
                   <div class="zone-stat"><span>Occupancy</span><span id="popupOccupancy">—</span></div>
@@ -818,15 +819,15 @@
     <div class="glass-card" style="width:400px; max-width:90vw;">
       <div class="card-header">
         <span class="card-title">⚙️ Settings</span>
-        <button id="closeSettings" style="font-size:1.2rem; color:var(--color-text-muted);">✕</button>
+        <button id="closeSettings" style="font-size:1.2rem; color:var(--color-text-muted);" aria-label="Close Settings">✕</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:var(--space-lg);">
         <div>
-          <label style="font-size:var(--text-sm);font-weight:600;display:block;margin-bottom:8px;">Gemini API Key</label>
+          <label for="apiKeyInput" style="font-size:var(--text-sm);font-weight:600;display:block;margin-bottom:8px;">Gemini API Key</label>
           <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key" style="width:100%;padding:10px 14px;border-radius:var(--radius-md);font-size:var(--text-sm);">
         </div>
         <div>
-          <label style="font-size:var(--text-sm);font-weight:600;display:block;margin-bottom:8px;">Data Refresh Rate</label>
+          <label for="refreshRate" style="font-size:var(--text-sm);font-weight:600;display:block;margin-bottom:8px;">Data Refresh Rate</label>
           <select id="refreshRate" style="width:100%;padding:10px 14px;border-radius:var(--radius-md);font-size:var(--text-sm);">
             <option value="2000">2 seconds (Real-time)</option>
             <option value="5000" selected>5 seconds (Balanced)</option>

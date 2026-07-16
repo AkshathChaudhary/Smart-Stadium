@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +16,10 @@
     "@google/genai": "^2.11.0",
     "chart.js": "^4.4.7",
     "vite": "^6.0.7"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.10",
+    "jsdom": "^29.1.1",
+    "vitest": "^4.1.10"
   }
 }
